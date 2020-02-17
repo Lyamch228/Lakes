@@ -1,10 +1,8 @@
 import discord
 import os
 from discord.ext  import commands
-import json
 import nekos
 import random
-import os
 
 bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
