@@ -2,6 +2,7 @@ import discord
 import os
 from discord.ext  import commands
 import random
+import nekos
 
 bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
@@ -109,8 +110,52 @@ async def userinfo(ctx, member: discord.Member):
     
     embed.add_field(name='bot?', value=member.bot) 
 
-    await ctx.send(embed=embed)    
+    await ctx.send(embed=embed)  
+	
+@bot.command()
+async def kiss(ctx, member : discord.Member):
+    await ctx.message.delete()
+    emb = discord.Embed(description= f'{member.mention}, Вас поцеловал(а) {ctx.message.author.mention}.')
+    await ctx.send(embed=emb)
 
+@bot.command()
+async def hug(ctx, member : discord.Member):
+    await ctx.message.delete()
+    emb = discord.Embed(description= f'{member.mention}, Вас обнял(а) {ctx.message.author.mention}.')
+    await ctx.send(embed=emb)
+
+@bot.command()
+async def slap(ctx, member : discord.Member):
+    await ctx.message.delete()
+    emb = discord.Embed(description= f'{member.mention}, Вас ударил(а) {ctx.message.author.mention}.')
+    await ctx.send(embed=emb)
+
+@bot.command()
+async def pat(ctx, member : discord.Member):
+    await ctx.message.delete()
+    emb = discord.Embed(description= f'{member.mention}, Вас погладил(а) {ctx.message.author.mention}.')
+    await ctx.send(embed=emb)
+
+@slap.error
+async def slap_error(ctx, error):
+	 if isinstance(error, commands.MissingRequiredArgument):
+          await ctx.send("+slap [ping]")
+          
+@hug.error
+async def hug_error(ctx, error):
+	 if isinstance(error, commands.MissingRequiredArgument):
+          await ctx.send("+hug [ping]")
+
+@kiss.error
+async def kiss_error(ctx, error):
+	 if isinstance(error, commands.MissingRequiredArgument):
+          await ctx.send("+kiss [ping]")
+
+@pat.error
+async def pat_error(ctx, error):
+	 if isinstance(error, commands.MissingRequiredArgument):
+          await ctx.send("+pat [ping]")
+	
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
 	await ctx.send(random.choice(["конечно",
