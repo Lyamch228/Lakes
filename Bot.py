@@ -84,7 +84,7 @@ async def help2(ctx):
     embed.add_field(name="kiss", value="поцеловать участника", inline=False)
     embed.add_field(name="slap", value="шлепнуть участника", inline=False)
     embed.add_field(name="hug", value="обнять уяастника", inline=False)
-    embed.add_field(name="pat", value="погладить участника", inline=Fals
+    embed.add_field(name="pat", value="погладить участника", inline=False)
     await ctx.send(embed=embed)
     
 @bot.command(pass_context=True, aliases=["whois", "info" ])
