@@ -81,7 +81,11 @@ async def help2(ctx):
     embed.add_field(name="teleportation", value="телепортировать участника с 1 голосовго канала на вторую", inline=False)
     embed.add_field(name="gay", value="показывает на сколько вы гей", inline=False)
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
-    await ctx.send(embed=embed)
+    embed.add_field(name="kiss", value="поцеловать участника", inline=False)
+    embed.add_field(name="slap", value="шлепнуть участника", inline=False)
+    embed.add_field(name="hug", value="обнять уяастника", inline=False)
+    embed.add_field(name="pat", value="погладить участника", inline=Fals
+		    await ctx.send(embed=embed)
     
 @bot.command(pass_context=True, aliases=["whois", "info" ])
  
