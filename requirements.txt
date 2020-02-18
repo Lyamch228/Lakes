@@ -2,4 +2,4 @@ discord.py
 aiohttp
 websockets
 chardet
--e git://github.com/Lyamch228/Lakes#egg=lakes
+git://github.com/Lyamch228/Lakes#egg=lakes
