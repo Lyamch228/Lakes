@@ -2,4 +2,4 @@ discord.py
 aiohttp
 websockets
 chardet
-git://github.com/Lyamch228/Lakes#egg=lakes
+git+https://github.com/Lyamch228/Lakes#egg=Bot.py
