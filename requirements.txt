@@ -2,3 +2,4 @@ discord.py
 aiohttp
 websockets
 chardet
+-e git:https://github.com/Lyamch228/Lakes/edit/master/requirements.txt
