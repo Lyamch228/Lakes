@@ -187,4 +187,7 @@ async def gay(ctx):
     random.randint(1, 100)
     embed = discord.Embed(title = None, description=f"{ctx.author} is {random.randint(1, 100)}% gay.")
     await ctx.send(embed=embed)
+
 token = os.environ.get('TOKEN')
+
+bot.run("token")
