@@ -2,4 +2,5 @@ discord.py
 aiohttp
 websockets
 chardet
+asyncpg
 git+git://github.com/Rapptz/discord.py.git
