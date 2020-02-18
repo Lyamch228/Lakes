@@ -1,7 +1,6 @@
 import discord
 import os
 from discord.ext  import commands
-import nekos
 import random
 
 bot = commands.Bot(command_prefix = "+")
@@ -60,50 +59,6 @@ async def say(ctx, channel: discord.TextChannel, *, text):
 @bot.event
 async def on_ready():
 	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name= "на лямыча с бекосой | +help"))
-
-@bot.command()
-async def kiss(ctx, member : discord.Member):
-    await ctx.message.delete()
-    emb = discord.Embed(description= f'{member.mention}, Вас поцеловал(а) {ctx.message.author.mention}.')
-    await ctx.send(embed=emb)
-
-@bot.command()
-async def hug(ctx, member : discord.Member):
-    await ctx.message.delete()
-    emb = discord.Embed(description= f'{member.mention}, Вас обнял(а) {ctx.message.author.mention}.')
-    await ctx.send(embed=emb)
-
-@bot.command()
-async def slap(ctx, member : discord.Member):
-    await ctx.message.delete()
-    emb = discord.Embed(description= f'{member.mention}, Вас ударил(а) {ctx.message.author.mention}.')
-    await ctx.send(embed=emb)
-
-@bot.command()
-async def pat(ctx, member : discord.Member):
-    await ctx.message.delete()
-    emb = discord.Embed(description= f'{member.mention}, Вас погладил(а) {ctx.message.author.mention}.')
-    await ctx.send(embed=emb)
-
-@slap.error
-async def slap_error(ctx, error):
-	 if isinstance(error, commands.MissingRequiredArgument):
-          await ctx.send("+slap [ping]")
-          
-@hug.error
-async def hug_error(ctx, error):
-	 if isinstance(error, commands.MissingRequiredArgument):
-          await ctx.send("+hug [ping]")
-
-@kiss.error
-async def kiss_error(ctx, error):
-	 if isinstance(error, commands.MissingRequiredArgument):
-          await ctx.send("+kiss [ping]")
-
-@pat.error
-async def pat_error(ctx, error):
-	 if isinstance(error, commands.MissingRequiredArgument):
-          await ctx.send("+pat [ping]")
 
 @bot.command()
 async def help(ctx):
