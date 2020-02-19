@@ -35,12 +35,6 @@ class Moderation(commands.Cog):
     @commands.bot_has_permissions(manage_nicknames=True)
     async def resetnick(self, ctx, member: discord.Member):
         await member.edit(nick=member.name)
-    @commands.command()
-    @commands.has_permissions(kick_members = True)
-    async def kick(ctx, member : discord.Member, *, reason=None):
-        await member.kick(reason=reason)
-        await ctx.send(f'{member} has been banned by {ctx.author.display_name} for {reason}')
-        await member.send(f'You have been kicked by {ctx.author.display_name} for {reason}')
-        
+    
 def setup(bot):
     bot.add_cog(Moderation(bot))
