@@ -34,7 +34,31 @@ class Moderation(commands.Cog):
     @commands.has_permissions(manage_nicknames=True)
     @commands.bot_has_permissions(manage_nicknames=True)
     async def resetnick(self, ctx, member: discord.Member):
-        await member.edit(nick=member.name)
+        await member.edit(nick=member.name   
+                          
+    @commands.command(aliases=["banish"])
+    @commands.has_permissions(ban_members=True)
+    async def ban(self, ctx, user: Sinner=None, reason=None):
+        """Casts users out of heaven."""
+        
+        if not user: # checks if there is a user
+            return await ctx.send("You must specify a user")
+        
+        try: # Tries to ban user
+            await ctx.guild.ban(user, f"By {ctx.author} for {reason}" or f"By {ctx.author} for None Specified")
+            await ctx.send(f"{user.mention} was cast out of heaven for {reason}.")
+        except discord.Forbidden:
+            return await ctx.send("Are you trying to ban someone higher than the bot")
     
+    @commands.command()
+    async def kick(self, ctx, user: Sinner=None, reason=None):
+        if not user: # checks if there is a user 
+            return await ctx.send("You must specify a user")
+        
+        try: # tries to kick user
+            await ctx.guild.kick(user, f"By {ctx.author} for {reason}" or f"By {ctx.author} for None Specified") 
+        except discord.Forbidden:
+            return await ctx.send("Are you trying to kick someone higher than the bot?")
+
 def setup(bot):
     bot.add_cog(Moderation(bot))
