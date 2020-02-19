@@ -35,6 +35,34 @@ class Moderation(commands.Cog):
     @commands.bot_has_permissions(manage_nicknames=True)
     async def resetnick(self, ctx, member: discord.Member):
         await member.edit(nick=member.name)
+   @commands.command(aliases=['бан'])
+   @commands.has_role('Админ')
+   async def ban(self, ctx, member: discord.Member = None, reason=None):
+	    logs = self.bot.get_channel(id)
+	    await ctx.message.delete()
+	    if member is None:
+	        await ctx.send('Укажите кого надо забанить', delete_after=10)
+	    elif member is ctx.message.author:
+	        await ctx.send('Ты шо дурной, зачем банить самого себя?', delete_after=10)
+	    else:
+	        if reason is None:
+	            emb = discord.Embed(title='Бан', description=f'Админ {ctx.author.mention} забанил пользователя {member}.')
+	            await logs.send(embed=emb)
+	            try:
+	                await member.send(f'Вас забанили на сервере {ctx.guild.name}')
+	            except Exception:
+	                print('Ошибочка...')
+	            finally:
+	                await ctx.guild.ban(member)
+	        elif reason is not None:
+	            emb = discord.Embed(title='Бан', description=f'Админ {ctx.author.mention} забанил пользователя {member} по причине {reason}.')
+	            await logs.send(embed=emb)
+	            try:
+	                await member.send(f'Вас забанили на сервере {ctx.guild.name} по причине {reason}.')
+	            except Exception:
+	                print('Ошибочка...')
+	            finally:
+	                await ctx.guild.ban(member, reason=reason)
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
