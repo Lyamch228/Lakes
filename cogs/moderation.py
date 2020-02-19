@@ -34,7 +34,7 @@ class Moderation(commands.Cog):
     @commands.has_permissions(manage_nicknames=True)
     @commands.bot_has_permissions(manage_nicknames=True)
     async def resetnick(self, ctx, member: discord.Member):
-        await member.edit(nick=member.name
+        await member.edit(nick=member.name)
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
