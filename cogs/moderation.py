@@ -17,7 +17,6 @@ class Moderation(commands.Cog):
             await ctx.send(f"Purged {amount} message", delete_after=10)
         else:
             await ctx.send(f"Purged {amount} messages", delete_after=10)
-                           .
     @commands.command()
     @commands.has_permissions(manage_nicknames=True)
     @commands.bot_has_permissions(manage_nicknames=True)
