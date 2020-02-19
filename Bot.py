@@ -58,7 +58,7 @@ async def say(ctx, channel: discord.TextChannel, *, text):
 
 @bot.event
 async def on_ready():
-	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name= "на лямыча с бекосой | +help"))
+	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name= " PornHub | +help"))
 
 @bot.command()
 async def help(ctx):
