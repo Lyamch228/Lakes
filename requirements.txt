@@ -2,6 +2,7 @@ discord.py
 aiohttp
 websockets
 chardet
+youtube_dl
 timeago
 asyncpg
 git+git://github.com/Rapptz/discord.py.git
