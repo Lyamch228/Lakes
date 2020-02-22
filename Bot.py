@@ -2,6 +2,7 @@ import discord
 import os
 from discord.ext  import commands
 import random
+import nekos
 
 bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
