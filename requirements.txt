@@ -4,7 +4,6 @@ websockets
 chardet
 wavelink
 config
-utils
 humanize
 youtube_dl
 timeago
