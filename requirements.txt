@@ -3,6 +3,7 @@ aiohttp
 websockets
 chardet
 wavelink
+utils
 humanize
 youtube_dl
 timeago
