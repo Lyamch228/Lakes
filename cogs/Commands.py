@@ -7,17 +7,7 @@ class commands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["purge"])
-    @commands.has_permissions(manage_messages=True)
-    @commands.bot_has_permissions(manage_messages=True)
-    async def clear(self, ctx, amount: int = 1):
-        await ctx.message.delete()
-        await ctx.channel.purge(limit=amount)
-        if amount == 1:
-            await ctx.send(f"Purged {amount} message", delete_after=10)
-        else:
-            await ctx.send(f"Purged {amount} messages", delete_after=10)
-            
+
     @commands.command()
     @commands.has_permissions(manage_nicknames=True)
     @commands.bot_has_permissions(manage_nicknames=True)
