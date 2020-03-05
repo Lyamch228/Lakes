@@ -2,10 +2,6 @@ discord.py
 aiohttp
 websockets
 chardet
-utils
-wavelink
-config
-humanize
 youtube_dl
 timeago
 asyncpg
