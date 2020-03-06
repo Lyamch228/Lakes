@@ -1,7 +1,5 @@
 discord.py
 aiohttp
-os
 websockets
-
 youtube-dl
 git+git://github.com/Rapptz/discord.py.git
