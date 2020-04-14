@@ -1,6 +1,7 @@
 discord.py
 aiohttp
 websockets
+nekos.py
 youtube-dl
 asyncpg
 timeago
