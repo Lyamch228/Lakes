@@ -140,25 +140,25 @@ async def gay(ctx):
     embed = discord.Embed(title = None, description=f"{ctx.author} is {random.randint(1, 100)}% gay.")
     await ctx.send(embed=embed)
 
-@Bot.command()
+@bot.command()
 async def kiss(ctx, member : discord.Member):
     await ctx.message.delete()
     emb = discord.Embed(description= f'{member.mention}, Вас поцеловал(а) {ctx.message.author.mention}.')
     await ctx.send(embed=emb)
 
-@Bot.command()
+@bot.command()
 async def hug(ctx, member : discord.Member):
     await ctx.message.delete()
     emb = discord.Embed(description= f'{member.mention}, Вас обнял(а) {ctx.message.author.mention}.')
     await ctx.send(embed=emb)
 
-@Bot.command()
+@bot.command()
 async def slap(ctx, member : discord.Member):
     await ctx.message.delete()
     emb = discord.Embed(description= f'{member.mention}, Вас ударил(а) {ctx.message.author.mention}.')
     await ctx.send(embed=emb)
 
-@Bot.command()
+@bot.command()
 async def pat(ctx, member : discord.Member):
     await ctx.message.delete()
     emb = discord.Embed(description= f'{member.mention}, Вас погладил(а) {ctx.message.author.mention}.')
@@ -184,7 +184,7 @@ async def pat_error(ctx, error):
 	 if isinstance(error, commands.MissingRequiredArgument):
           await ctx.send("+pat [ping]")
 
-@Bot.command()
+@bot.command()
 @commands.has_permissions(administrator= True)
 async def clear(ctx, amount: int):
             await ctx.channel.purge(limit=amount)
