@@ -144,24 +144,28 @@ async def gay(ctx):
 async def kiss(ctx, member : discord.Member):
     await ctx.message.delete()
     emb = discord.Embed(description= f'{member.mention}, Вас поцеловал(а) {ctx.message.author.mention}.')
+    emb.set_image(url=nekos.img('kiss'))
     await ctx.send(embed=emb)
 
 @bot.command()
 async def hug(ctx, member : discord.Member):
     await ctx.message.delete()
     emb = discord.Embed(description= f'{member.mention}, Вас обнял(а) {ctx.message.author.mention}.')
+    emb.set_image(url=nekos.img('hug'))
     await ctx.send(embed=emb)
 
 @bot.command()
 async def slap(ctx, member : discord.Member):
     await ctx.message.delete()
     emb = discord.Embed(description= f'{member.mention}, Вас ударил(а) {ctx.message.author.mention}.')
+    emb.set_image(url=nekos.img('spal'))
     await ctx.send(embed=emb)
 
 @bot.command()
 async def pat(ctx, member : discord.Member):
     await ctx.message.delete()
     emb = discord.Embed(description= f'{member.mention}, Вас погладил(а) {ctx.message.author.mention}.')
+    emb.set_image(url=nekos.img('pat'))
     await ctx.send(embed=emb)
 
 @slap.error
