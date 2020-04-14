@@ -2,6 +2,7 @@ import discord
 import os
 from discord.ext  import commands
 import random
+import nekos
 
 bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
@@ -110,7 +111,7 @@ async def userinfo(ctx, member: discord.Member):
     embed.add_field(name='bot?', value=member.bot) 
 
     await ctx.send(embed=embed)
-	
+
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
 	await ctx.send(random.choice(["конечно",
@@ -139,4 +140,54 @@ async def gay(ctx):
     embed = discord.Embed(title = None, description=f"{ctx.author} is {random.randint(1, 100)}% gay.")
     await ctx.send(embed=embed)
 
+@Bot.command()
+async def kiss(ctx, member : discord.Member):
+    await ctx.message.delete()
+    emb = discord.Embed(description= f'{member.mention}, Вас поцеловал(а) {ctx.message.author.mention}.')
+    await ctx.send(embed=emb)
+
+@Bot.command()
+async def hug(ctx, member : discord.Member):
+    await ctx.message.delete()
+    emb = discord.Embed(description= f'{member.mention}, Вас обнял(а) {ctx.message.author.mention}.')
+    await ctx.send(embed=emb)
+
+@Bot.command()
+async def slap(ctx, member : discord.Member):
+    await ctx.message.delete()
+    emb = discord.Embed(description= f'{member.mention}, Вас ударил(а) {ctx.message.author.mention}.')
+    await ctx.send(embed=emb)
+
+@Bot.command()
+async def pat(ctx, member : discord.Member):
+    await ctx.message.delete()
+    emb = discord.Embed(description= f'{member.mention}, Вас погладил(а) {ctx.message.author.mention}.')
+    await ctx.send(embed=emb)
+
+@slap.error
+async def slap_error(ctx, error):
+	 if isinstance(error, commands.MissingRequiredArgument):
+          await ctx.send("+slap [ping]")
+          
+@hug.error
+async def hug_error(ctx, error):
+	 if isinstance(error, commands.MissingRequiredArgument):
+          await ctx.send("+hug [ping]")
+
+@kiss.error
+async def kiss_error(ctx, error):
+	 if isinstance(error, commands.MissingRequiredArgument):
+          await ctx.send("+kiss [ping]")
+
+@pat.error
+async def pat_error(ctx, error):
+	 if isinstance(error, commands.MissingRequiredArgument):
+          await ctx.send("+pat [ping]")
+
+@Bot.command()
+@commands.has_permissions(administrator= True)
+async def clear(ctx, amount: int):
+            await ctx.channel.purge(limit=amount)
+            await ctx.send("ваши сообщении удалились")
+	
 bot.run(os.getenv('TOKEN'))
