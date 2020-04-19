@@ -1,12 +1,8 @@
 discord.py
 aiohttp
-yolodb>=0.3,<0.4
 websockets
-pyyaml
-BeautifulSoup4
 nekos.py
 youtube-dl
 asyncpg
 timeago
-git+https://github.com/Devoxin/Lavalink.py@b614a5389e3cf5ea7c444041428a05b084ca15ec
 git+git://github.com/Rapptz/discord.py.git
