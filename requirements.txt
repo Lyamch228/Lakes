@@ -1,5 +1,6 @@
 discord.py
 aiohttp
+yolodb>=0.3,<0.4
 websockets
 nekos.py
 youtube-dl
