@@ -200,7 +200,7 @@ async def clear(ctx, amount: int):
             await ctx.channel.purge(limit=amount)
             await ctx.send("ваши сообщении удалились")
 
-	@bot.command(pass_context=True)
+@bot.command(pass_context=True)
 async def rank(ctx):
     
     try:
