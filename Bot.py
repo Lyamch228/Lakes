@@ -3,6 +3,12 @@ import os
 from discord.ext  import commands
 import random
 import nekos
+import logging
+import yaml
+import sqlite3
+import time
+import random
+import re
 
 bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
@@ -193,5 +199,92 @@ async def pat_error(ctx, error):
 async def clear(ctx, amount: int):
             await ctx.channel.purge(limit=amount)
             await ctx.send("ваши сообщении удалились")
+
+	@bot.command(pass_context=True)
+async def rank(ctx):
+    
+    try:
+        _, member = (ctx.message.content).split(' ', 1)
+        member = re.sub("[^0-9]", "", member)
+    except:
+        member = ctx.message.author.id
+    
+    db = sqlite3.connect('data/users.db')
+    c = db.cursor()
+
+    c.execute('SELECT user.*, (SELECT count(*) FROM users AS members WHERE members.rawexp > user.rawexp) as Rank FROM users AS user WHERE id = ?',
+              (ctx.message.author.id, ))
+    
+    user = c.fetchone()
+    db.close()
+
+    rank = str(user[6] + 1)
+
+    embed = discord.Embed(title='{}\'s Information'.format(ctx.message.author.name)) \
+            .set_thumbnail(url=ctx.message.author.avatar_url) \
+            .add_field(name='Rank', value='#' + rank) \
+            .add_field(name='Level', value=user[2]) \
+            .add_field(name='EXP', value='{}/{}'.format(user[3], threshold(user[2]))) \
+            .add_field(name='Raw EXP', value=user[4]) \
+
+    await bot.say(embed=embed)
+
+@bot.event
+async def on_message(message):
+
+    if message.author == bot.user:
+        return
+    if message.author.bot:
+        return
+
+    if message.content.startswith('l>'):
+        await bot.process_commands(message)
+        return
+        
+    db = sqlite3.connect('data/users.db')
+    c = db.cursor()
+
+    c.execute('SELECT * FROM users WHERE id= ?', (message.author.id,))
+    user = c.fetchone()
+        
+    if user is None:
+        await bot.send_message(message.channel, 'Looks like you\'re new! Welcome to level 1. Initializing player...')
+        c.execute('INSERT INTO users(id, name, level, exp, rawexp, time) VALUES(?,?,?,?,?,?)', (message.author.id, message.author.name, 1, 0, 0, time.time()))
+        db.commit()
+        db.close()
+        return
+
+    if message.author.name != user[1]:
+        c.execute('UPDATE users SET name = ? WHERE id= ?', (message.author.name, message.author.id))
+
+    if (time.time() - user[5]) > 60:
+        addedexp = random.randint(10, 25)
+        exp = user[3] + addedexp
+        rawexp = user[4] + addedexp
+        c.execute('UPDATE users SET exp = ?, rawexp = ?, name = ?, time = ? WHERE id= ?', (exp, rawexp, message.author.name, time.time(), message.author.id))
+
+        if (exp > threshold(user[2])):
+            level = user[2] + 1
+            c.execute('UPDATE users SET exp = ?, level = ? WHERE id= ?', (0, level, message.author.id))
+            await bot.send_message(message.channel, 'Wowza! You leveled up! Your level is now **{}**.'.format(level))
+
+    db.commit()
+    db.close()
+
+    await bot.process_commands(message)
+
+@bot.event
+async def on_ready():
+    print("LevelBot Mee6Clone")
+    print(bot.user.name)
+    print(bot.user.id)
+    await bot.change_presence(game=discord.Game(name='a meme', url="https://twitch.tv/meme", type=1))
+
+    #Initialize database.
+    db = sqlite3.connect('data/users.db')
+    c = db.cursor()
+    c.execute('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, name TEXT, level INT, exp INTEGER, rawexp INTEGER, time REAL)')
+    db.commit()
+
 	
 bot.run(os.getenv('TOKEN'))
