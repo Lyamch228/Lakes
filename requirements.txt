@@ -38,7 +38,7 @@ pyparsing==2.2.0
 python-dateutil==2.6.0
 pytz==2017.2
 pyzmq==16.0.2
-requests==2.14.2
+requests==2.20.0
 rstcheck==3.1
 selenium==3.4.2
 simplegeneric==0.8.1
