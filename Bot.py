@@ -65,19 +65,7 @@ async def teleportation(ctx, arg=None, member: discord.Member = None):
                     await mem.edit(voice_channel=vchannel)
         else:
             await member.edit(voice_channel=vchannel)
-	
-@bot.command()
-async def serverinfo(ctx):
-    embed = discord.Embed(name="{}'s info".format(ctx.guild.name), description="Информация о сервере.", color=0x000000)
-    embed.set_footer(text= f'Вызвано: {ctx.message.author}')
-    embed.add_field(name="Name", value=ctx.guild.name, inline=True)
-    embed.add_field(name="ID", value=ctx.guild.id, inline=True)
-    embed.add_field(name="роли", value=len(ctx.guild.roles), inline=True)
-    embed.add_field(name="участники", value=len(ctx.guild.members))
-    embed.set_thumbnail(url=ctx.guild.icon_url)
-    await ctx.send(embed=embed)
-		
-		
+				
 @bot.command()
 async def ping(ctx):
     try:
