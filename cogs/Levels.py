@@ -10,13 +10,13 @@ class Levels(commands.Cog):
 
         self.bot.loop.create_task(self.seve_users())
 
-        with open(r"/home/luna/Desktop/cogs/user.json", 'r') as f:
+        with open(r"./user.json", 'r') as f:
             self.users = json.load(f)
 
     async def seve_users(self):
         await self.bot.wait_until_ready()
         while not self.bot.is_closed():
-            with open(r"/home/luna/Desktop/cogs/user.json", 'w') as f:
+            with open(r"./user.json", 'w') as f:
                 json.dump(self.users, f, indent=4)
 
             await asyncio.sleep(5)
