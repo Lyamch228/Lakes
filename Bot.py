@@ -42,7 +42,7 @@ for filename in os.listdir("./cogs"):
 	if filename.endswith('.py'):
 		bot.load_extension(f'cogs.{filename[:-3]}')
 
-@Bot.command(pass_context=True, aliases=["telep", "tp" ])
+@bot.command(pass_context=True, aliases=["telep", "tp" ])
 async def teleportation(ctx, arg=None, member: discord.Member = None):
         channels = ctx.author.voice.channel.id
         await ctx.message.delete()
@@ -66,7 +66,7 @@ async def teleportation(ctx, arg=None, member: discord.Member = None):
         else:
             await member.edit(voice_channel=vchannel)
 	
-@Bot.command()
+@bot.command()
 async def serverinfo(ctx):
     embed = discord.Embed(name="{}'s info".format(ctx.guild.name), description="Информация о сервере.", color=0x000000)
     embed.set_footer(text= f'Вызвано: {ctx.message.author}')
@@ -247,13 +247,13 @@ async def addrole(ctx, member : discord.Member, *, role : discord.Role):
     await member.add_roles(role)
     await ctx.send(f"added the role '{role}' to {member}!") 
   
-@Bot.command(pass_context=True)
+@bot.command(pass_context=True)
 @commands.has_permissions(administrator = True)
 async def removerole(ctx, member : discord.Member, *, role : discord.Role):
     await member.remove_roles(role)
     await ctx.send(f"removed the role '{role}' to {member}!") 
 	
-@Bot.command(pass_context=True, aliases=["whois", "info" ])
+@bot.command(pass_context=True, aliases=["whois", "info" ])
  
 async def userinfo(ctx, member: discord.Member):
 
@@ -267,7 +267,7 @@ async def userinfo(ctx, member: discord.Member):
     embed.set_thumbnail(url=member.avatar_url)
     embed.set_footer(text=f'Requested by {ctx.author}', icon_url=ctx.author.avatar_url)
 
-@Bot.command()                 
+@bot.command()                 
 async def avatar(ctx, member : discord.Member = None):
                             user = ctx.message.author if (member == None) else member
                             await ctx.message.delete()
