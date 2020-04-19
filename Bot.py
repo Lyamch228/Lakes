@@ -3,9 +3,49 @@ import os
 from discord.ext  import commands
 import random
 import nekos
+import json
 
 bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
+
+bot = discord.Client()
+try:
+with open("users.json") as fp:
+    users = json.load(fp)
+except Exception:
+users = {}
+
+def save_users():
+with open("users.json", "w+") as fp:
+    json.dump(users, fp, sort_keys=True, indent=4)
+
+def add_points(user: discord.User, points: int):
+id = user.id
+if id not in users:
+    users[id] = {}
+users[id]["level"] = users[id].get("level", 0) + points
+#  print("{} now has {} level".format(user.name, users[id]["level"]))
+save_users()
+
+def get_points(user: discord.User):
+id = user.id
+if id in users:
+    return users[id].get("level", 0)
+return 0
+
+@bot.event
+async def on_message(message):
+if message.author == client.user:
+    return
+# print("{} sent a message".format(message.author.name))
+# if message.content.lower().startswith("!points"):
+#     msg = "You have {} points!".format(get_points(message.author))
+#     await client.send_message(message.channel, msg)
+add_points(message.author, 0.01)
+
+if message.content == '!Lvl':
+    msg = "Your Lvl {}!".format(get_points(message.author))
+    await client.send_message(message.channel, msg) 
 
 @bot.command()
 async  def load(ctx, extension):
