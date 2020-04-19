@@ -17,7 +17,7 @@ async def rank(self, ctx):
 
 bot = discord.Client()
 try:
-with open("users.json") as fp:
+	with open("users.json") as fp:
     users = json.load(fp)
 except Exception:
 users = {}
