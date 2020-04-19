@@ -2,6 +2,8 @@ discord.py
 aiohttp
 yolodb>=0.3,<0.4
 websockets
+pyyaml
+BeautifulSoup4
 nekos.py
 youtube-dl
 asyncpg
