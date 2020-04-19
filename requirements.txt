@@ -1,6 +1,7 @@
 discord.py
 aiohttp
 websockets
+pyyaml
 nekos.py
 youtube-dl
 asyncpg
