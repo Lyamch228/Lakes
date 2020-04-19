@@ -229,7 +229,7 @@ async def clear(ctx, amount: int):
             await ctx.channel.purge(limit=amount)
             await ctx.send("ваши сообщении удалились")
 
-@Bot.command(pass_context=True)
+@bot.command(pass_context=True)
 @commands.has_permissions(administrator = True)
 async def addrole(ctx, member : discord.Member, *, role : discord.Role):
     await member.add_roles(role)
