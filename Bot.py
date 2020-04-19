@@ -9,18 +9,11 @@ bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
 
 @bot.command()
-async def rank(ctx):
-  with open('users.json', 'r') as f:
-    users = json.load(f)
-
-  xp  = sorted(users, key=lambda x : users[x].get('experience', 0), reverse=True)
-
-  member = get_member(str(user.id)
-
-  message = ''
-  for number, user in enumerate(xp):
-    message += '{0}. {1} with {2}xp\n'.format(number + 1, user, users[user].get('experience', 0))
-    await ctx.send(message)
+async def rank(self, ctx):
+	f = open('users.json')
+	users = json.load(f)
+	rank = users[ctx.author.id]['level']
+	ctx.send(f'Ur level is {rank}')
 
 bot = discord.Client()
 try:
