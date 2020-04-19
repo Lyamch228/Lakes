@@ -42,6 +42,42 @@ for filename in os.listdir("./cogs"):
 	if filename.endswith('.py'):
 		bot.load_extension(f'cogs.{filename[:-3]}')
 
+@Bot.command(pass_context=True, aliases=["telep", "tp" ])
+async def teleportation(ctx, arg=None, member: discord.Member = None):
+        channels = ctx.author.voice.channel.id
+        await ctx.message.delete()
+        if not channels:
+            await ctx.send('Нужно находиться в войсе', delete_after=10)
+            return
+        if not arg:
+            await ctx.send('Нужно указать, куда переместить юзеров', delete_after=10)
+            return
+        voice = ctx.guild.voice_channels
+        print(voice)
+        try:
+            vchannel = voice[int(arg) - 1]
+        except:
+            await ctx.send('Неправильный аргумент', delete_after=10)
+            return
+        if member == None:
+            x = ctx.author.voice.channel.members
+            for mem in x:
+                    await mem.edit(voice_channel=vchannel)
+        else:
+            await member.edit(voice_channel=vchannel)
+	
+@Bot.command()
+async def serverinfo(ctx):
+    embed = discord.Embed(name="{}'s info".format(ctx.guild.name), description="Информация о сервере.", color=0x000000)
+    embed.set_footer(text= f'Вызвано: {ctx.message.author}')
+    embed.add_field(name="Name", value=ctx.guild.name, inline=True)
+    embed.add_field(name="ID", value=ctx.guild.id, inline=True)
+    embed.add_field(name="роли", value=len(ctx.guild.roles), inline=True)
+    embed.add_field(name="участники", value=len(ctx.guild.members))
+    embed.set_thumbnail(url=ctx.guild.icon_url)
+    await ctx.send(embed=embed)
+		
+		
 @bot.command()
 async def ping(ctx):
     try:
@@ -204,5 +240,40 @@ async def pat_error(ctx, error):
 async def clear(ctx, amount: int):
             await ctx.channel.purge(limit=amount)
             await ctx.send("ваши сообщении удалились")
-    	
+
+@Bot.command(pass_context=True)
+@commands.has_permissions(administrator = True)
+async def addrole(ctx, member : discord.Member, *, role : discord.Role):
+    await member.add_roles(role)
+    await ctx.send(f"added the role '{role}' to {member}!") 
+  
+@Bot.command(pass_context=True)
+@commands.has_permissions(administrator = True)
+async def removerole(ctx, member : discord.Member, *, role : discord.Role):
+    await member.remove_roles(role)
+    await ctx.send(f"removed the role '{role}' to {member}!") 
+	
+@Bot.command(pass_context=True, aliases=["whois", "info" ])
+ 
+async def userinfo(ctx, member: discord.Member):
+
+    roles = [role for role in member.roles]
+
+
+
+    embed = discord.Embed(colour=member.color, timestamp=ctx.message.created_at)
+
+    embed.set_author(name=f'User Info -{member}')
+    embed.set_thumbnail(url=member.avatar_url)
+    embed.set_footer(text=f'Requested by {ctx.author}', icon_url=ctx.author.avatar_url)
+
+@Bot.command()                 
+async def avatar(ctx, member : discord.Member = None):
+                            user = ctx.message.author if (member == None) else member
+                            await ctx.message.delete()
+                            embed = discord.Embed(title=f'Аватар пользователя {user}', description= f'[Ссылка на изображение]({user.avatar_url})', color=user.color)
+                            embed.set_footer(text= f'Вызвано: {ctx.message.author}', icon_url= str(ctx.message.author.avatar_url))
+                            embed.set_image(url=user.avatar_url)
+                            await ctx.send(embed=embed)
+
 bot.run(os.getenv('TOKEN'))
