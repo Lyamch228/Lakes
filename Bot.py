@@ -212,7 +212,7 @@ async def removerole(ctx, member : discord.Member, *, role : discord.Role):
     await member.remove_roles(role)
     await ctx.send(f"removed the role '{role}' to {member}!") 
 
-@Bot.command(pass_context=True, aliases=["whois", "info" ])
+@bot.command(pass_context=True, aliases=["whois", "info" ])
  
 async def userinfo(ctx, member: discord.Member):
 
