@@ -30,7 +30,7 @@ class Levels(commands.Cog):
 		cur_xp = self.users[author_id]['exp']
 		cur_lvl = self.users[author_id]['level']
 
-		if cur_xp >= round(4*(cur_lvl**3)/5):
+		if cur_xp >= round(4*(cur_lvl**30)/5):
 			self.users[author_id]['level'] += 1
 			self.users[author_id]['money'] += self.users[author_id]['level']*5
 			return True
