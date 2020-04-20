@@ -211,8 +211,8 @@ async def addrole(ctx, member : discord.Member, *, role : discord.Role):
 async def removerole(ctx, member : discord.Member, *, role : discord.Role):
     await member.remove_roles(role)
     await ctx.send(f"removed the role '{role}' to {member}!") 
-	
-@bot.command(pass_context=True, aliases=["whois", "info" ])
+
+@Bot.command(pass_context=True, aliases=["whois", "info" ])
  
 async def userinfo(ctx, member: discord.Member):
 
@@ -225,6 +225,21 @@ async def userinfo(ctx, member: discord.Member):
     embed.set_author(name=f'User Info -{member}')
     embed.set_thumbnail(url=member.avatar_url)
     embed.set_footer(text=f'Requested by {ctx.author}', icon_url=ctx.author.avatar_url)
+
+
+    embed.add_field(name='ID:', value=member.id)
+    embed.add_field(name='ник на сервере :', value=member.display_name)
+
+    embed.add_field(name='создал аккаунт:', value=member.created_at.strftime('%a, %#d %B %Y %I:%M %p EST'))
+    embed.add_field(name='присоединился в', value=member.joined_at.strftime('%a, %#d %B %Y %I:%M %p EST'))
+
+    embed.add_field(name=f'Роли: ({len(roles)})', value=' '.join([role.mention for role in roles]))
+
+    embed.add_field(name='самая большая роль:', value=member.top_role.mention)
+    
+    embed.add_field(name='Бот?', value=member.bot) 
+
+    await ctx.send(embed=embed)    
 
 @bot.command()                 
 async def avatar(ctx, member : discord.Member = None):
