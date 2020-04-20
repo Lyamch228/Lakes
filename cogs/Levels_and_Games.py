@@ -49,11 +49,11 @@ class Levels(commands.Cog):
 
 		if not author_id in self.users:
 			self.users[author_id] = {}
-			self.users[author_id]['level'] = 1
+			self.users[author_id]['level'] = 0
 			self.users[author_id]['exp'] = 0
 			self.users[author_id]['money'] = 0
 
-		self.users[author_id]['exp'] += 1
+		self.users[author_id]['exp'] += 20
 
 		if self.lvl_up(author_id):
 			await message.channel.send(f"{message.author.mention} получил {self.users[author_id]['level']} уровень и {self.users[author_id]['level']*5} пивных крышек!")
