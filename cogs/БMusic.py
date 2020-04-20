@@ -3,7 +3,6 @@ from discord.ext import commands
 from discord.utils import get
 import youtube_dl
 import os
-import ffmpeg
 import shutil
 import asyncio
 
