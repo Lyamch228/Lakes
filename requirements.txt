@@ -5,5 +5,6 @@ pyyaml
 nekos.py
 youtube-dl
 asyncpg
+chardet
 timeago
 git+git://github.com/Rapptz/discord.py.git
