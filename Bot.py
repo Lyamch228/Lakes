@@ -116,35 +116,6 @@ async def help2(ctx):
     embed.add_field(name="gay", value="показывает на сколько вы гей", inline=False)
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
-    
-@bot.command(pass_context=True, aliases=["whois", "info" ])
- 
-async def userinfo(ctx, member: discord.Member):
-
-    roles = [role for role in member.roles]
-
-
-
-    embed = discord.Embed(colour=member.color, timestamp=ctx.message.created_at)
-
-    embed.set_author(name=f'User Info -{member}')
-    embed.set_thumbnail(url=member.avatar_url)
-    embed.set_footer(text=f'Requested by {ctx.author}', icon_url=ctx.author.avatar_url)
-
-
-    embed.add_field(name='ID:', value=member.id)
-    embed.add_field(name='Guild name:', value=member.display_name)
-
-    embed.add_field(name='Created at:', value=member.created_at.strftime('%a, %#d %B %Y %I:%M %p EST'))
-    embed.add_field(name='Joined at:', value=member.joined_at.strftime('%a, %#d %B %Y %I:%M %p EST'))
-
-    embed.add_field(name=f'Roles ({len(roles)})', value=' '.join([role.mention for role in roles]))
-
-    embed.add_field(name='Top role:', value=member.top_role.mention)
-    
-    embed.add_field(name='bot?', value=member.bot) 
-
-    await ctx.send(embed=embed)
 
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
