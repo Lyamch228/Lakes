@@ -11,14 +11,14 @@ class Levels(commands.Cog):
 		self.bot = bot
 
 		self.bot.loop.create_task(self.save_users())
-		with open(r'/home/adminroot/vasiliy_bot/cogs/users.json', 'r') as f:
+		with open(r'./cogs/users.json', 'r') as f:
 			self.users = json.load(f)
 
 	@commands.Cog.listener()
 	async def save_users(self):
 		await self.bot.wait_until_ready()
 		while not self.bot.is_closed():
-			with open(r'/home/adminroot/vasiliy_bot/cogs/users.json', 'w') as f:
+			with open(r'./cogs/users.json', 'w') as f:
 				json.dump(self.users, f, indent=4)
 
 			await asyncio.sleep(5)
@@ -30,7 +30,7 @@ class Levels(commands.Cog):
 		cur_xp = self.users[author_id]['exp']
 		cur_lvl = self.users[author_id]['level']
 
-		if cur_xp >= round(4*(cur_lvl**3)/5):
+		if cur_xp >= round(40*(cur_lvl**30)/5):
 			self.users[author_id]['level'] += 1
 			self.users[author_id]['money'] += self.users[author_id]['level']*5
 			return True
@@ -49,7 +49,7 @@ class Levels(commands.Cog):
 
 		if not author_id in self.users:
 			self.users[author_id] = {}
-			self.users[author_id]['level'] = 1
+			self.users[author_id]['level'] = 0
 			self.users[author_id]['exp'] = 0
 			self.users[author_id]['money'] = 0
 
