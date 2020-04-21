@@ -31,7 +31,7 @@ class Levels(commands.Cog):
 		cur_lvl = self.users[author_id]['level']
 
 		if cur_xp >= round(4*(cur_lvl**30)/5):
-			self.users[author_id]['level'] += 1
+			self.users[author_id]['level'] += 10
 			self.users[author_id]['money'] += self.users[author_id]['level']*5
 			return True
 
@@ -53,7 +53,7 @@ class Levels(commands.Cog):
 			self.users[author_id]['exp'] = 0
 			self.users[author_id]['money'] = 0
 
-		self.users[author_id]['exp'] += 20
+		self.users[author_id]['exp'] += 1
 
 		if self.lvl_up(author_id):
 			await message.channel.send(f"{message.author.mention} получил {self.users[author_id]['level']} уровень и {self.users[author_id]['level']*5} пивных крышек!")
