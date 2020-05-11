@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from random import choice
 
-class Music(commands.Cog):
+class giveaway(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
     
@@ -41,3 +41,5 @@ class Music(commands.Cog):
         await ctx.send(f'Победитель розыгрыша - {user.mention}!\n '
                        f'Напишите {author.mention}, чтобы получить награду')
  
+def setup(bot):
+	bot.add_cog(giveaway(bot))
