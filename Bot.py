@@ -116,12 +116,6 @@ async def help2(ctx):
     embed.add_field(name="gay", value="показывает на сколько вы гей", inline=False)
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
-
-@Bot.command()
-@commands.has_permissions(ban_members=True)
-async def say(ctx, *, text):
-    await ctx.send(text)
-	
 	
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
