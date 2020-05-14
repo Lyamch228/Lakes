@@ -172,7 +172,7 @@ async def pat(ctx, member : discord.Member):
 
 @bot.command()
 async def bite(ctx, member : discord.Member):
-    emb = discord.Embed(description= f'{member.mention}, Вас погладил(а) {ctx.message.author.mention}.')
+    emb = discord.Embed(description= f'{member.mention}, Вас укусил(а) {ctx.message.author.mention}.')
     emb.set_image(url=nekos.img('bite'))
     await ctx.send(embed=emb)
 
