@@ -80,7 +80,7 @@ async def ping(ctx):
       
 @bot.command()
 @commands.has_permissions(ban_members=True)
-async def say(ctx, channel: discord.TextChannel, *, text):
+async def echo(ctx, channel: discord.TextChannel, *, text):
     attachments = ctx.message.attachments
     emb = discord.Embed(
         description = text,
@@ -117,6 +117,12 @@ async def help2(ctx):
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
 
+@Bot.command()
+@commands.has_permissions(ban_members=True)
+async def say(ctx, *, text):
+    await ctx.send(text)
+	
+	
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
 	await ctx.send(random.choice(["конечно",
