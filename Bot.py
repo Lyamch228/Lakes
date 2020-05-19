@@ -125,6 +125,7 @@ async def help2(ctx):
     embed.add_field(name="avatar", value="показывает аватар участника", inline=False)
     embed.add_field(name="teleportation", value="телепортировать участника с 1 голосовго канала на вторую", inline=False)
     embed.add_field(name="gay", value="показывает на сколько вы гей", inline=False)
+    embed.add_field(name="suggest", value="предложить идею,для улучшения серверв", inline=False
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
 	
