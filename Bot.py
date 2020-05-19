@@ -76,8 +76,19 @@ async def ping(ctx):
         title= 'Текущий пинг',
         description= f'{bot.ws.latency * 1000:.0f} ms'
     )
-    await ctx.send(embed=emb) 
-      
+    await ctx.send(embed=emb)
+
+@bot.command()
+async def suggest( ctx , * , agr ):
+    suggest_chanell = bot.get_channel( 707625071426011276 ) #Айди канала предложки
+    embed = discord.Embed(title=f"{ctx.author.name} Предложил :", description= f" {agr} \n\n")
+
+    embed.set_thumbnail(url=ctx.guild.icon_url)
+
+    message = await suggest_chanell.send(embed=embed)
+    await message.add_reaction(':white_check_mark:')
+    await message.add_reaction(':negative_squared_cross_mark:')
+
 @bot.command()
 @commands.has_permissions(ban_members=True)
 async def echo(ctx, channel: discord.TextChannel, *, text):
