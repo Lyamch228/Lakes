@@ -91,7 +91,7 @@ async def suggest( ctx , * , agr ):
 
 @bot.command()
 @commands.has_permissions(ban_members=True)
-async def echo(ctx, channel: discord.TextChannel, *, text):
+async def say(ctx, channel: discord.TextChannel, *, text):
     attachments = ctx.message.attachments
     emb = discord.Embed(
         description = text,
@@ -125,7 +125,7 @@ async def help2(ctx):
     embed.add_field(name="avatar", value="показывает аватар участника", inline=False)
     embed.add_field(name="teleportation", value="телепортировать участника с 1 голосовго канала на вторую", inline=False)
     embed.add_field(name="gay", value="показывает на сколько вы гей", inline=False)
-    embed.add_field(name="suggest", value="предложить идею,для улучшения серверв", inline=False
+    embed.add_field(name="suggest", value="предложить идею,для улучшения серверв", inline=False)
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
 	
