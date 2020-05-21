@@ -5,15 +5,8 @@ from discord.ext  import commands
 import random
 import nekos
 import json
-import datetime, pyowm
-import speech_recognition as sr
 from discord.utils import get
 import youtube_dl
-
-from time import sleep
-import requests
-from PIL import Image, ImageFont, ImageDraw
-import io
 
 bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
