@@ -148,7 +148,7 @@ async def tempmute(ctx, member:discord.Member = None, amount:int = 3600, reason 
         await ctx.send(embed = discord.Embed(description = f'**Участник <@!{member.id}> был заглушен на {amount} секунд!**'))
         await asyncio.sleep(amount)
         await member.remove_roles(mute_role)
-	await ctx.send(embed = discord.Embed(description = f'**С участника <@!{member.id}> были сняты ограничения!**'
+	await ctx.send(embed = discord.Embed(description = f'**С участника <@!{member.id}> были сняты ограничения!**'))
 
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
