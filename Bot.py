@@ -116,6 +116,7 @@ async def help(ctx):
     embed.add_field(name="tempmute", value="замутить участника сервера на время", inline=False)
     embed.add_field(name="ban", value="забанить нарушителя", inline=False)
     embed.add_field(name="kick", value="кикнуть нарушителя", inline=False)
+    embed.add_field(name="tempmute", value="мутить нарушителя (пример: +tempmute (время в секундах. пример: 10) (ник участника) (пример)", inline=False)
     await ctx.send(embed=embed)
 
 @bot.command()
