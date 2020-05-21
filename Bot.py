@@ -294,7 +294,7 @@ async def avatar(ctx, member : discord.Member = None):
 async def join(ctx):
 	global voice
 	channel = ctx.message.author.voice.channel
-	voice = get(bot.voice_bots, guild=ctx.guild)
+	voice = get(bot.voice_clients, guild=ctx.guild)
 	if voice and voice.is_connected():
 		await voice.move_to(channel)
 	else:
@@ -306,7 +306,7 @@ async def join(ctx):
 @bot.command()
 async def leave(ctx):
 	channel = ctx.message.author.voice.channel
-	voice = get(bot.voice_bots, guild=ctx.guild)
+	voice = get(bot.voice_clients, guild=ctx.guild)
 	if voice and voice.is_connected():
 		await voice.disconnect()
 	else:
@@ -325,7 +325,7 @@ async def play(ctx, url : str):
 
 	await ctx.send('Пожалуйста ожидайте')
 
-	voice = get(bot.voice_bots, guild = ctx.guild)
+	voice = get(bot.voice_clients, guild = ctx.guild)
 
 	ydl_opts = {
 		'format' : 'bestaudio/best',
