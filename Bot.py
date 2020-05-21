@@ -129,48 +129,26 @@ async def help2(ctx):
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
 
-@bot.command()
-@commands.cooldown(1, 10, commands.BucketType.user)
-async def giveaway( ctx, seconds: int, *, text ):
-    def time_end_form( seconds ):
-        h = seconds//3600
-        m = (seconds - h*3600)//60
-        s = seconds%60
-        if h < 10:
-            h = f"0{h}"
-        if m < 10:
-            m = f"0{m}"
-        if s < 10:
-            s = f"0{s}"
-        time_reward = f"{h} : {m} : {s}"
-        return time_reward
-
-    author = ctx.message.author
-    time_end = time_end_form(seconds)
-    message = await ctx.send(embed = discord.Embed(
-        description = f"**Разыгрывается : `{text}`\nЗавершится через: `{time_end}` \n\nОрганизатор: {author.mention} \nДля участия нажмите на реакцию ниже.**",
-        colour = 0x75218f).set_footer(
-        text = 'ζ͜͡𝔻𝕣𝕒𝕘𝕠𝕟 𝔽𝕖𝕤𝕙#8992 © | Все права защищены',
-        icon_url = ctx.message.author.avatar_url))
-    await message.add_reaction("🎲")
-    while seconds > -1:
-        time_end = time_end_form(seconds)
-        text_message = discord.Embed(
-            description = f"**Разыгрывается: `{text}`\nЗавершится через: `{time_end}` \n\nОрганизатор: {author.mention} \nДля участия нажмите на реакцию ниже.**",
-            colour = 0x75218f).set_footer(
-            text = 'ζ͜͡𝔻𝕣𝕒𝕘𝕠𝕟 𝔽𝕖𝕤𝕙#8992 © | Все права защищены',
-            icon_url = ctx.message.author.avatar_url)
-        await message.edit(embed = text_message)
-        await asyncio.sleep(1)
-        seconds -= 1
-        if seconds < -1:
-            break
-    channel = message.channel
-    message_id = message.id
-    message = await channel.fetch_message(message_id)
-    reaction = message.reactions[ 0 ]
-
-    users = await reaction.users().flatten()
+@bot.command()#3555
+@commands.has_permissions(administrator=True)
+async def tempmute(ctx, member:discord.Member = None, amount:int = 3600, reason = 'причина не указана'):
+    await ctx.message.delete()
+ 
+    if not member:
+        message = await ctx.send('Вы не указали участника!')
+        await asyncio.sleep(amount = 10)
+        await message.delete()
+    elif amount > 86400:
+        message = await ctx.send('Время мута не должно превышать 24 часа!')
+        await asyncio.sleep(amount = 10)
+        await message.delete()
+    else:
+        mute_role = discord.utils.get(member.guild.roles, name='mute')
+        await member.add_roles(mute_role)
+        await ctx.send(embed = discord.Embed(description = f'**Участник <@!{member.id}> был заглушен на {amount} секунд!**'))
+        await asyncio.sleep(amount)
+        await member.remove_roles(mute_role)
+	await ctx.send(embed = discord.Embed(description = f'**С участника <@!{member.id}> были сняты ограничения!**'
 
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
