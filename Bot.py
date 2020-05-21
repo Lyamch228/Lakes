@@ -129,24 +129,13 @@ async def help2(ctx):
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
 
-@bot.command()
-async def send(ctx, type, n1, n2, *text):
-    if author.id == '427792105537142794':
-        txt = ''
-        if type=='server' or type=='s':
-            txt = ' '.join(text)
-            await client.get_guild(int(n1)).get_channel(int(n2)).send(txt)
-        elif type=='private' or type=='p':
-            txt = f'{n2} ' + ' '.join(text)
-            await client.get_user(int(n1)).send(txt)
-
 @bot.event
 async def on_message(message):
     #Чтение лс
-    await client.process_commands(message)
-    if message.author != client.user:
+    await bot.process_commands(message)
+    if message.author != bot.user:
         if not message.guild: # Проверка что это ЛС
-            chanel = chanel = client.get_channel('713059558213550201')
+            chanel = chanel = bot.get_channel('713059558213550201')
             if message.content == None:
                 text = 'Пустое сообщение'
             else:
@@ -307,7 +296,7 @@ async def avatar(ctx, member : discord.Member = None):
 
 @bot.event
 async def on_message(message):
-    if message.author.id != client.user.id: # Проверка бот ли это
+    if message.author.id != bot.user.id: # Проверка бот ли это
         if message.guild: # Проверка на сервере ли это
             await client.process_commands(message) # Выполнение команды
         else: 
