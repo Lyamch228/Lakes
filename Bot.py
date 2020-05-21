@@ -129,27 +129,6 @@ async def help2(ctx):
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
 
-@bot.command()#3555
-@commands.has_permissions(administrator=True)
-async def tempmute(ctx, member:discord.Member = None, amount:int = 3600, reason = 'причина не указана'):
-    await ctx.message.delete()
- 
-    if not member:
-        message = await ctx.send('Вы не указали участника!')
-        await asyncio.sleep(amount = 10)
-        await message.delete()
-    elif amount > 86400:
-        message = await ctx.send('Время мута не должно превышать 24 часа!')
-        await asyncio.sleep(amount = 10)
-        await message.delete()
-    else:
-        mute_role = discord.utils.get(member.guild.roles, name='mute')
-        await member.add_roles(mute_role)
-        await ctx.send(embed = discord.Embed(description = f'**Участник <@!{member.id}> был заглушен на {amount} секунд!**'))
-        await asyncio.sleep(amount)
-        await member.remove_roles(mute_role)
-	await ctx.send(embed = discord.Embed(description = f'**С участника <@!{member.id}> были сняты ограничения!**'))
-
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
 	await ctx.send(random.choice(["конечно",
