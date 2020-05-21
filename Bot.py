@@ -5,6 +5,15 @@ from discord.ext  import commands
 import random
 import nekos
 import json
+import datetime, pyowm
+import speech_recognition as sr
+from discord.utils import get
+import youtube_dl
+
+from time import sleep
+import requests
+from PIL import Image, ImageFont, ImageDraw
+import io
 
 bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
@@ -287,6 +296,70 @@ async def avatar(ctx, member : discord.Member = None):
                             embed.set_footer(text= f'Вызвано: {ctx.message.author}', icon_url= str(ctx.message.author.avatar_url))
                             embed.set_image(url=user.avatar_url)
                             await ctx.send(embed=embed)
+			
+@bot.command()
+async def join(ctx):
+	global voice
+	channel = ctx.message.author.voice.channel
+	voice = get(bot.voice_bots, guild=ctx.guild)
+	if voice and voice.is_connected():
+		await voice.move_to(channel)
+	else:
+		voice = await channel.connect()
+		engine = pyttsx3.init()
+		engine.say('Привет, человечушки. Как жизнь на земле!?')
+		engine.runAndWait()
+
+@bot.command()
+async def leave(ctx):
+	channel = ctx.message.author.voice.channel
+	voice = get(bot.voice_bots, guild=ctx.guild)
+	if voice and voice.is_connected():
+		await voice.disconnect()
+	else:
+		voice = await channel.connect()
+
+@bot.command()
+async def play(ctx, url : str):
+	song_there = os.path.isfile('song.mp3')
+
+	try:
+		if song_there:
+			os.remove('song.mp3')
+			print('[log] Старый файл удален')
+	except PermissionError:
+		print('[log] Не удалось удалить файл')
+
+	await ctx.send('Пожалуйста ожидайте')
+
+	voice = get(bot.voice_bots, guild = ctx.guild)
+
+	ydl_opts = {
+		'format' : 'bestaudio/best',
+		'postprocessors' : [{
+			'key' : 'FFmpegExtractAudio',
+			'preferredcodec' : 'mp3',
+			'preferredquality' : '192'
+		}],
+	}
+
+	with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+		print('[log] Загружаю музыку...')
+		ydl.download([url])
+
+	for file in os.listdir('./'):
+		if file.endswith('.mp3'):
+			name = file
+			print(f'[log] Переименовываю файл: {file}')
+			os.rename(file, 'song.mp3')
+
+	voice.play(discord.FFmpegPCMAudio('song.mp3'), after = lambda e: print(f'[log] {name}, музыка закончила свое проигрывание'))
+	voice.source = discord.PCMVolumeTransformer(voice.source)
+	voice.source.volume = 0.07
+
+	song_name = name.rsplit('-', 2)
+	await ctx.send(f'Сейчас проигрывает музыка: {song_name[0]}')
+
 
 @bot.event
 async def on_message(message):
