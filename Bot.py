@@ -132,7 +132,7 @@ async def help2(ctx):
 @bot.event
 async def on_voice_state_update(member,before,after):
     if after.channel.id == 696945303001104416:
-        for guild in client.guilds:
+        for guild in bot.guilds:
             if guild.id == 696945303001104416:
                 mainCategory = discord.utils.get(guild.categories, id=696945303001104416)
                 channel2 = await guild.create_voice_channel(name=f"{member.display_name}",category=mainCategory)
