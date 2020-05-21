@@ -131,7 +131,7 @@ async def help2(ctx):
     await ctx.send(embed=embed)
 
 @bot.command()
-@commands.has_permissions( administrator = True )
+@commands.has_permissions( ban_members=True )
 async def tempmute(ctx,amount : int,member: discord.Member = None, reason = None):
     mute_role = discord.utils.get(member.guild.roles, id = 707612817204838491) #Айди роли
     channel_log = bot.get_channel(704191405807108186) #Айди канала логов
