@@ -129,19 +129,48 @@ async def help2(ctx):
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
 
-@bot.event
-async def on_voice_state_update(member,before,after):
-    if after.channel.id == 696945303001104416:
-        for guild in bot.guilds:
-            if guild.id == 696945303001104416:
-                mainCategory = discord.utils.get(guild.categories, id=696945303001104416)
-                channel2 = await guild.create_voice_channel(name=f"{member.display_name}",category=mainCategory)
-                await member.move_to(channel2)
-                await channel2.set_permissions(member,manage_channels=True)
-                def check(a,b,c):
-                    return len(channel2.members) == 0
-                await bot.wait_for('voice_state_update', check=check)
-                await channel2.delete()
+@bot.command()
+@commands.cooldown(1, 10, commands.BucketType.user)
+async def giveaway( ctx, seconds: int, *, text ):
+    def time_end_form( seconds ):
+        h = seconds//3600
+        m = (seconds - h*3600)//60
+        s = seconds%60
+        if h < 10:
+            h = f"0{h}"
+        if m < 10:
+            m = f"0{m}"
+        if s < 10:
+            s = f"0{s}"
+        time_reward = f"{h} : {m} : {s}"
+        return time_reward
+
+    author = ctx.message.author
+    time_end = time_end_form(seconds)
+    message = await ctx.send(embed = discord.Embed(
+        description = f"**Разыгрывается : `{text}`\nЗавершится через: `{time_end}` \n\nОрганизатор: {author.mention} \nДля участия нажмите на реакцию ниже.**",
+        colour = 0x75218f).set_footer(
+        text = 'ζ͜͡𝔻𝕣𝕒𝕘𝕠𝕟 𝔽𝕖𝕤𝕙#8992 © | Все права защищены',
+        icon_url = ctx.message.author.avatar_url))
+    await message.add_reaction("🎲")
+    while seconds > -1:
+        time_end = time_end_form(seconds)
+        text_message = discord.Embed(
+            description = f"**Разыгрывается: `{text}`\nЗавершится через: `{time_end}` \n\nОрганизатор: {author.mention} \nДля участия нажмите на реакцию ниже.**",
+            colour = 0x75218f).set_footer(
+            text = 'ζ͜͡𝔻𝕣𝕒𝕘𝕠𝕟 𝔽𝕖𝕤𝕙#8992 © | Все права защищены',
+            icon_url = ctx.message.author.avatar_url)
+        await message.edit(embed = text_message)
+        await asyncio.sleep(1)
+        seconds -= 1
+        if seconds < -1:
+            break
+    channel = message.channel
+    message_id = message.id
+    message = await channel.fetch_message(message_id)
+    reaction = message.reactions[ 0 ]
+
+    users = await reaction.users().flatten()
 
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
