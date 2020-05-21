@@ -130,33 +130,18 @@ async def help2(ctx):
     await ctx.send(embed=embed)
 
 @bot.event
-async def on_message(message):
-    #Чтение лс
-    await bot.process_commands(message)
-    if message.author != bot.user:
-        if not message.guild: # Проверка что это ЛС
-            chanel = chanel = bot.get_channel('713059558213550201')
-            if message.content == None:
-                text = 'Пустое сообщение'
-            else:
-                text = message.content
-
-            if message.attachments == []:
-                file = 'Файла нет'
-                filename = 'Файла нет'
-            else:
-                file = message.attachments[0].url
-                filename = message.attachments[0].filename
-
-            embed = discord.Embed(title = message.author.name, description = f'''
-    Текст сообщения: {text}
-    Название файла: {filename}
-    Ccылка на файл: {file}
-    '''
-    ,color=discord.Colour.green()) 
-            embed.set_author(name=message.author, icon_url=message.author.avatar_url)
-            
-            await channel.send(embed = embed)
+async def on_voice_state_update(member,before,after):
+    if after.channel.id == 696945303001104416:
+        for guild in client.guilds:
+            if guild.id == 696945303001104416:
+                mainCategory = discord.utils.get(guild.categories, id=696945303001104416)
+                channel2 = await guild.create_voice_channel(name=f"{member.display_name}",category=mainCategory)
+                await member.move_to(channel2)
+                await channel2.set_permissions(member,manage_channels=True)
+                def check(a,b,c):
+                    return len(channel2.members) == 0
+                await bot.wait_for('voice_state_update', check=check)
+                await channel2.delete()
 
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
