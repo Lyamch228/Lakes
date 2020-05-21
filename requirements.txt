@@ -3,8 +3,6 @@ aiohttp
 websockets
 pyyaml
 nekos.py
-speech_recognition
-pyowm
 asyncio
 youtube-dl
 asyncpg
