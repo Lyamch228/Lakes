@@ -3,6 +3,7 @@ aiohttp
 websockets
 pyyaml
 nekos.py
+asyncio
 youtube-dl
 asyncpg
 chardet
