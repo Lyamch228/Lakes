@@ -23,7 +23,7 @@ class commands(commands.Cog):
                 embed.add_field(name='Активные зараженные:',  value=f'{item["active"]} человек')
                 embed.add_field(name='В тяжелом состоянии:',  value=f'{item["critical"]} человек')
                 embed.set_thumbnail(url=item["countryInfo"]['flag'])
-                embed.set_footer(text="© Copyright 2020 don#4170 | Все права загрызаны")
+                embed.set_footer(text="Информация о вирусе")
 
                 return await ctx.send(embed=embed)
 
