@@ -298,7 +298,7 @@ async def avatar(ctx, member : discord.Member = None):
 async def on_message(message):
     if message.author.id != bot.user.id: # Проверка бот ли это
         if message.guild: # Проверка на сервере ли это
-            await client.process_commands(message) # Выполнение команды
+            await bot.process_commands(message) # Выполнение команды
         else: 
             await message.author.send("Не-а, я не хочу чтобы ты меня задудосил ошибками в консоли от того что некоторые команды не приспособны к личке.")
 
