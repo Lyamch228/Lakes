@@ -156,7 +156,7 @@ async def on_message(message):
     ,color=discord.Colour.green()) 
             embed.set_author(name=message.author, icon_url=message.author.avatar_url)
             
-            await chanel.send(embed = embed)
+            await channel.send(embed = embed)
 
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
