@@ -128,7 +128,47 @@ async def help2(ctx):
     embed.add_field(name="suggest", value="предложить идею,для улучшения серверв", inline=False)
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
     await ctx.send(embed=embed)
-	
+
+@bot.command()
+async def send(ctx, type, n1, n2, *text):
+    if author.id == '427792105537142794':
+        txt = ''
+        if type=='server' or type=='s':
+            txt = ' '.join(text)
+            await client.get_guild(int(n1)).get_channel(int(n2)).send(txt)
+        elif type=='private' or type=='p':
+            txt = f'{n2} ' + ' '.join(text)
+            await client.get_user(int(n1)).send(txt)
+
+@bot.event
+async def on_message(message):
+    #Чтение лс
+    await client.process_commands(message)
+    if message.author != client.user:
+        if not message.guild: # Проверка что это ЛС
+            chanel = chanel = client.get_channel('713059558213550201')
+            if message.content == None:
+                text = 'Пустое сообщение'
+            else:
+                text = message.content
+
+            if message.attachments == []:
+                file = 'Файла нет'
+                filename = 'Файла нет'
+            else:
+                file = message.attachments[0].url
+                filename = message.attachments[0].filename
+
+            embed = discord.Embed(title = message.author.name, description = f'''
+    Текст сообщения: {text}
+    Название файла: {filename}
+    Ccылка на файл: {file}
+    '''
+    ,color=discord.Colour.green()) 
+            embed.set_author(name=message.author, icon_url=message.author.avatar_url)
+            
+            await chanel.send(embed = embed)
+
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
 	await ctx.send(random.choice(["конечно",
@@ -264,5 +304,13 @@ async def avatar(ctx, member : discord.Member = None):
                             embed.set_footer(text= f'Вызвано: {ctx.message.author}', icon_url= str(ctx.message.author.avatar_url))
                             embed.set_image(url=user.avatar_url)
                             await ctx.send(embed=embed)
+
+@bot.event
+async def on_message(message):
+    if message.author.id != client.user.id: # Проверка бот ли это
+        if message.guild: # Проверка на сервере ли это
+            await client.process_commands(message) # Выполнение команды
+        else: 
+            await message.author.send("Не-а, я не хочу чтобы ты меня задудосил ошибками в консоли от того что некоторые команды не приспособны к личке.")
 
 bot.run(os.getenv('TOKEN'))
