@@ -1,7 +1,7 @@
 discord.py
 aiohttp
 websockets
-pyyaml
+pynacl==1.2.1
 nekos.py
 asyncio
 youtube-dl
