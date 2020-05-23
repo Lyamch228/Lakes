@@ -1,7 +1,7 @@
 import discord
 import discord, asyncpg
 from discord.ext import commands
-import config
+
 class help(commands.Cog):
 
     def __init__(self, bot):
@@ -11,7 +11,7 @@ class help(commands.Cog):
     
     @commands.command(aliases=['хелп', 'помощь'])
     async def help(self, ctx):
-        prefix = config.prefix
+        prefix = '+'
         embed = discord.Embed(title="Все команды **Lake Bot**", description="")
         embed.add_field(name=f'**serverinfo**', value=prefix+"serverinfo показывает информацию о сервере" inline=True)  # Создает строку
         embed.add_field(name=f'**userinfo**', value=prefix+"userinfo показвает информацию об участнике", inline=True)  # Создает строку
