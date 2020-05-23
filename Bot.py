@@ -110,18 +110,6 @@ async def on_ready():
 	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name= " Test | +help"))
 
 @bot.command()
-async def help(ctx):
-    embed = discord.Embed(title="commands", description="", color=0xeee657)
-    embed.set_footer(text='help command 1/2.')
-    embed.add_field(name="mute", value="мутить нарушителей", inline=False)
-    embed.add_field(name="unmute", value="размутить нарушителя", inline=False)
-    embed.add_field(name="tempmute", value="замутить участника сервера на время", inline=False)
-    embed.add_field(name="ban", value="забанить нарушителя", inline=False)
-    embed.add_field(name="kick", value="кикнуть нарушителя", inline=False)
-    embed.add_field(name="tempmute", value="мутить нарушителя (пример: +tempmute (время в секундах. пример: 10) (ник участника) (пример)", inline=False)
-    await ctx.send(embed=embed)
-
-@bot.command()
 async def help2(ctx):
     embed = discord.Embed(title="commands", description="", color=0xeee657)
     embed.set_footer(text='help command 2/2.')
