@@ -16,7 +16,7 @@ def get_prefix(bot, message):
 	return prefixes[str(message.guild.id)]
 	
 bot = commands.Bot(command_prefix = get_prefix)
-
+bot.remove_command("help")
 @bot.event()
 async def on_guild_join(guild):
 	with open('prefixes.json', 'r') as f:
@@ -37,7 +37,18 @@ async def on_guild_remove(guild):
 	
 	with open('prefixes.json', 'w') as f:
 		json.dump(prefixes, f, indent = 4)
-bot.remove_command("help")
+
+@bot.command()
+async def prefix(guild):
+	with open('prefixes.json', 'r') as f:
+		prefixes = json.load(f)
+		
+	prefixes[str(guild.id)] = prefix
+	
+	with open('prefixes.json', 'w') as f:
+		json.dump(prefixes, f, indent = 4)
+
+
 @bot.command()
 async  def load(ctx, extension):
 	bot.initial_extension(f'{extension}')
