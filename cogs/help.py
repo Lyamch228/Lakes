@@ -13,14 +13,14 @@ class help(commands.Cog):
     async def help(self, ctx):
         prefix = '+'
         embed = discord.Embed(title="Все команды **Lake Bot**", description="")
-        embed.add_field(name=f'**serverinfo**', value=prefix+"serverinfo показывает информацию о сервере" inline=True)  # Создает строку
-        embed.add_field(name=f'**userinfo**', value=prefix+"userinfo показвает информацию об участнике", inline=True)  # Создает строку
-        embed.add_field(name=f'**tempmute**', value=prefix+"tempmute <юзер>", inline=True)  # Создает строку
-        embed.add_field(name=f'**mute**', value=prefix+"mute <юзер>", inline=True)  # Создает строку
-        embed.add_field(name=f'**Шар**', value=prefix+"шар <вопрос>", inline=True)  # Создает строку
-        embed.add_field(name=f'**ban**', value=prefix+"ban <юзер>", inline=True)  # Создает строку
-        embed.add_field(name=f'**kick**', value=prefix+"kick <юзер>", inline=True)  # Создает строку
-        embed.add_field(name=f'**kick**', value=prefix+"kick <юзер>", inline=True) # Создает строку
+        embed.add_field(name=f'**serverinfo**', value="serverinfo показывает информацию о сервере" inline=True)  # Создает строку
+        embed.add_field(name=f'**userinfo**', value="userinfo показвает информацию об участнике", inline=True)  # Создает строку
+        embed.add_field(name=f'**tempmute**', value="tempmute <юзер>", inline=True)  # Создает строку
+        embed.add_field(name=f'**mute**', value="mute <юзер>", inline=True)  # Создает строку
+        embed.add_field(name=f'**Шар**', value="шар <вопрос>", inline=True)  # Создает строку
+        embed.add_field(name=f'**ban**', value="ban <юзер>", inline=True)  # Создает строку
+        embed.add_field(name=f'**kick**', value="kick <юзер>", inline=True)  # Создает строку
+        embed.add_field(name=f'**unmute**', value="unmute <юзер>", inline=True) # Создает строку
         await ctx.send(embed=embed)
 
 def setup(bot):
