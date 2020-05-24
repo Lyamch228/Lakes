@@ -8,7 +8,25 @@ import json
 from discord.utils import get
 import youtube_dl
 
-bot = commands.Bot(command_prefix = "+")
+def get_prefix(client, message): # Функция
+    if message.guild: # Проверка есть ли сервер (мало-ли кто-то в лс напишет)
+
+        ### СЮДА ВАШ КОД ДЛЯ ПОЛУЧЕНИЯ ПРЕФИКСА ИЗ БД ###
+        # Я сделал через отдельную функцию это (у меня MongoBD), вот если интересно:
+        # pref = Get_GuildOptions.others(message)
+        # prefix = pref["prefix"]
+
+        # Если вам не нужна эта проверка то можете её убрать... Главное не забудь-те добавить Return префикса
+        if prefix: # Если вывод из базы данных не является пустым (None) то:
+            prefix = prefix[0] # Получение значения из списка (ЕСЛИ У ВАС ВЫВОД ИЗ БД ЭТО СПИСОК)
+        else:
+            prefix = "+" # Если в базе данных не записан префикс то используем стандартный префикс.
+
+        return str(prefix) # Возращяем сам префикс.
+    else:
+        return "+" # Выдача стандартного префикса
+
+bot = commands.Bot(command_prefix=get_prefix
 bot.remove_command("help")
 
 @bot.command(name='cl')
