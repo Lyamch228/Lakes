@@ -41,7 +41,7 @@ async def on_guild_remove(guild):
 
 	
 @bot.command()
-async def setprefix(ctx, prefix):
+async def changeprefix(ctx, prefix):
 	with open('prefixes.json', 'r') as f:
 		prefixes = json.load(f)
 		
