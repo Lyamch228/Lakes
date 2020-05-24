@@ -40,7 +40,7 @@ async def on_guild_remove(guild):
 		json.dump(prefixes, f, indent = 4)
 
 @bot.command()
-async def prefix(guild):
+async def setprefix(guild):
 	with open('prefixes.json', 'r') as f:
 		prefixes = json.load(f)
 		
