@@ -26,16 +26,7 @@ def get_prefix(client, message): # Функция
     else:
         return "+" # Выдача стандартного префикса
 
-bot = commands.Bot(command_prefix=get_prefix
-
-@bot.command(name='cl')
-@commands.has_role('admin')
-async def create_channel(ctx, channel_name='real-python'):
-    guild = ctx.guild
-    existing_channel = discord.utils.get(guild.channels, name=channel_name)
-    if not existing_channel:
-        print(f'Creating a new channel: {channel_name}')
-        await guild.create_text_channel(channel_name)
+bot = commands.Bot(command_prefix=get_prefix)
 
 @bot.command()
 async  def load(ctx, extension):
@@ -181,6 +172,16 @@ async def serverinfo(ctx):
     embed.add_field(name="участники", value=len(ctx.guild.members))
     embed.set_thumbnail(url=ctx.guild.icon_url)
     await ctx.send(embed=embed)	             
+
+
+@bot.command(name='cl')
+@commands.has_role('admin')
+async def create_channel(ctx, channel_name='real-python'):
+    guild = ctx.guild
+    existing_channel = discord.utils.get(guild.channels, name=channel_name)
+    if not existing_channel:
+        print(f'Creating a new channel: {channel_name}')
+        await guild.create_text_channel(channel_name)
 
 @bot.command()
 async def gay(ctx):
