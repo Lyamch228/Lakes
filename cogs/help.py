@@ -21,7 +21,8 @@ class help(commands.Cog):
         embed.add_field(name=f'**ban**', value="ban <юзер>", inline=True)  # Создает строку
         embed.add_field(name=f'**kick**', value="kick <юзер>", inline=True)  # Создает строку
         embed.add_field(name=f'**unmute**', value="unmute <юзер>", inline=True) # Создает строку
-        await ctx.send(embed=embed)
+        embed.set_footer(text=f"тест")  # создаение футера
+        await ctx.send(embed=embed) 
 
 def setup(bot):
     bot.add_cog(help(bot))
