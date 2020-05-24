@@ -39,6 +39,7 @@ async def on_guild_remove(guild):
 	with open('prefixes.json', 'w') as f:
 		json.dump(prefixes, f, indent = 4)
 
+	
 @bot.command()
 async def setprefix(guild):
 	with open('prefixes.json', 'r') as f:
@@ -48,7 +49,7 @@ async def setprefix(guild):
 	
 	with open('prefixes.json', 'w') as f:
 		json.dump(prefixes, f, indent = 4)
-
+	await ctx.send(f"префикс на этом сервер: {prefix}")
 
 @bot.command()
 async  def load(ctx, extension):
