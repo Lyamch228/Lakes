@@ -27,7 +27,6 @@ def get_prefix(client, message): # Функция
         return "+" # Выдача стандартного префикса
 
 bot = commands.Bot(command_prefix=get_prefix
-bot.remove_command("help")
 
 @bot.command(name='cl')
 @commands.has_role('admin')
