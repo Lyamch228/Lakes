@@ -3,7 +3,7 @@ from discord.ext import commands
 import json
 import requests
 
-class commands(commands.Cog):
+class covid(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -28,4 +28,4 @@ class commands(commands.Cog):
                 return await ctx.send(embed=embed)
 
 def setup(bot):
-    bot.add_cog(commands(bot))
+    bot.add_cog(covid(bot))
