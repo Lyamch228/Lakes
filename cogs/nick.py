@@ -2,7 +2,7 @@ from datetime import datetime
 import discord, asyncpg
 from discord.ext import commands
 from discord import utils
-class commands(commands.Cog):
+class nick(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -28,4 +28,4 @@ class commands(commands.Cog):
         await member.edit(nick=member.name)
 
 def setup(bot):
-    bot.add_cog(commands(bot))
+    bot.add_cog(nick(bot))
