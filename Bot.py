@@ -17,6 +17,7 @@ def get_prefix(bot, message):
 	
 bot = commands.Bot(command_prefix = get_prefix)
 bot.remove_command("help")
+
 @bot.event()
 async def on_guild_join(guild):
 	with open('prefixes.json', 'r') as f:
