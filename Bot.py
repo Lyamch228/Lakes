@@ -119,16 +119,15 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx):
-	embed = discord.Embed(title="Все команды **Lake Bot**", description="")
-        embed.add_field(name=f'**serverinfo**', value="serverinfo показывает информацию о сервере" inline=True)  # Создает строку
-        embed.add_field(name=f'**userinfo**', value="userinfo показвает информацию об участнике", inline=True)  # Создает строку
-        embed.add_field(name=f'**tempmute**', value="tempmute <юзер>", inline=True)  # Создает строку
-        embed.add_field(name=f'**mute**', value="mute <юзер>", inline=True)  # Создает строку
-        embed.add_field(name=f'**Шар**', value="шар <вопрос>", inline=True)  # Создает строку
-        embed.add_field(name=f'**ban**', value="ban <юзер>", inline=True)  # Создает строку
-        embed.add_field(name=f'**kick**', value="kick <юзер>", inline=True)  # Создает строку
-        embed.add_field(name=f'**unmute**', value="unmute <юзер>", inline=True) # Создает строку
-        await ctx.send(embed=embed) 
+    embed = discord.Embed(title="commands", description="", color=0xeee657)
+    embed.set_footer(text='help command 1/2.')
+    embed.add_field(name="mute", value="мутить участника", inline=True)
+    embed.add_field(name="tempmute", value="мут участника на время", inline=True)
+    embed.add_field(name="ban", value="бан участника", inline=True)
+    embed.add_field(name="kick", value="кик участника", inline=True)
+    embed.add_field(name="unmute", value="размут участника", inline=True)
+    await ctx.send(embed=embed)
+
 
 
 @bot.command(pass_context=True, aliases=["help 2"])
