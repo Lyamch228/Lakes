@@ -20,7 +20,7 @@ class help(commands.Cog):
         embed.add_field(name=f'**Шар**', value=prefix+"шар <вопрос>", inline=True)  # Создает строку
         embed.add_field(name=f'**ban**', value=prefix+"ban <юзер>", inline=True)  # Создает строку
         embed.add_field(name=f'**kick**', value=prefix+"kick <юзер>", inline=True)  # Создает строку
-        embed.add_field(name=f'**unmute**', value=prefix+"unmute <юзер> ", inline=True)  # Создает строку
+        embed.add_field(name=f'**kick**', value=prefix+"kick <юзер>", inline=True) # Создает строку
         await ctx.send(embed=embed)
 
 def setup(bot):
