@@ -27,7 +27,7 @@ def get_prefix(client, message): # Функция
         return "+" # Выдача стандартного префикса
 
 bot = commands.Bot(command_prefix=get_prefix)
-
+bot.remove_command("help")
 @bot.command()
 async  def load(ctx, extension):
 	bot.initial_extension(f'{extension}')
@@ -118,6 +118,20 @@ async def on_ready():
 	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name= " Test | +help"))
 
 @bot.command()
+async def help(ctx):
+	embed = discord.Embed(title="Все команды **Lake Bot**", description="")
+        embed.add_field(name=f'**serverinfo**', value="serverinfo показывает информацию о сервере" inline=True)  # Создает строку
+        embed.add_field(name=f'**userinfo**', value="userinfo показвает информацию об участнике", inline=True)  # Создает строку
+        embed.add_field(name=f'**tempmute**', value="tempmute <юзер>", inline=True)  # Создает строку
+        embed.add_field(name=f'**mute**', value="mute <юзер>", inline=True)  # Создает строку
+        embed.add_field(name=f'**Шар**', value="шар <вопрос>", inline=True)  # Создает строку
+        embed.add_field(name=f'**ban**', value="ban <юзер>", inline=True)  # Создает строку
+        embed.add_field(name=f'**kick**', value="kick <юзер>", inline=True)  # Создает строку
+        embed.add_field(name=f'**unmute**', value="unmute <юзер>", inline=True) # Создает строку
+        await ctx.send(embed=embed) 
+
+
+@bot.command(pass_context=True, aliases=["help 2"])
 async def help2(ctx):
     embed = discord.Embed(title="commands", description="", color=0xeee657)
     embed.set_footer(text='help command 2/2.')
