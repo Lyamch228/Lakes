@@ -1,13 +1,12 @@
 import discord
 import os
 import asyncio
+import json
 from discord.ext  import commands
 import random
 import nekos
-import json
 from discord.utils import get
 import youtube_dl
-import json
 
 def get_prefix(bot, message):
 	with open('prefixes.json', 'r') as f:
