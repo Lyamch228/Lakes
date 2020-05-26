@@ -142,7 +142,7 @@ async def on_ready():
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(title="commands", description="", color=0xeee657)
-    embed.set_footer(text='help command 1/2.')
+    embed.set_footer(text='help command 1/4.')
     embed.add_field(name="mute", value="мутить участника", inline=True)
     embed.add_field(name="tempmute", value="мут участника на время", inline=True)
     embed.add_field(name="ban", value="бан участника", inline=True)
@@ -155,13 +155,30 @@ async def help(ctx):
 @bot.command(pass_context=True, aliases=["help 2"])
 async def help2(ctx):
     embed = discord.Embed(title="commands", description="", color=0xeee657)
-    embed.set_footer(text='help command 2/2.')
-    embed.add_field(name="шар", value="гадание", inline=False)
-    embed.add_field(name="avatar", value="показывает аватар участника", inline=False)
-    embed.add_field(name="teleportation", value="телепортировать участника с 1 голосовго канала на вторую", inline=False)
-    embed.add_field(name="gay", value="показывает на сколько вы гей", inline=False)
-    embed.add_field(name="suggest", value="предложить идею,для улучшения серверв", inline=False)
-    embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=False)
+    embed.set_footer(text='help command 2/4.')
+    embed.add_field(name="шар", value="гадание", inline=True)
+    embed.add_field(name="avatar", value="показывает аватар участника", inline=True)
+    embed.add_field(name="teleportation", value="телепортировать участника с 1 голосовго канала на вторую", inline=True)
+    embed.add_field(name="gay", value="показывает на сколько вы гей", inline=True)
+    embed.add_field(name="suggest", value="предложить идею,для улучшения серверв", inline=True)
+    embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=True)
+    await ctx.send(embed=embed)
+
+@bot.command(pass_context=True, aliases=["help 3"])
+async def help3(ctx):
+    embed = discord.Embed(title="commands", description="", color=0xeee657)
+    embed.set_footer(text='help command 3/4.')
+    embed.add_field(name="kiss", value="поцеловать участника сервера", inline=True)
+    embed.add_field(name="hug", value="обнять участника сервера", inline=True)
+    embed.add_field(name="slap", value="ударить участника сервера", inline=True)
+    embed.add_field(name="pat", value="погладить участника сервера", inline=True)
+    await ctx.send(embed=embed)
+
+@bot.command(pass_context=True, aliases=["help 4"])
+async def help4(ctx):
+    embed = discord.Embed(title="commands", description="", color=0xeee657)
+    embed.set_footer(text='help command 3/4.')
+    embed.add_field(name="setprefix", value="изменить префикс бота", inline=True)
     await ctx.send(embed=embed)
 
 @bot.command()
