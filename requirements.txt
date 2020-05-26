@@ -5,7 +5,6 @@ pynacl==1.2.1
 ffprobe
 ffmpeg
 nekos.py
-sqlite3
 asyncio
 youtube-dl
 asyncpg
