@@ -152,7 +152,7 @@ async def help(ctx):
 
 
 
-@bot.command(pass_context=True, aliases=["help 2"])
+@bot.command(aliases=["help 2"])
 async def help2(ctx):
     embed = discord.Embed(title="commands", description="", color=0xeee657)
     embed.set_footer(text='help command 2/4.')
@@ -164,7 +164,7 @@ async def help2(ctx):
     embed.add_field(name="serverinfo", value="узнать информацию о сервере", inline=True)
     await ctx.send(embed=embed)
 
-@bot.command(pass_context=True, aliases=["help 3"])
+@bot.command(aliases=["help 3"])
 async def help3(ctx):
     embed = discord.Embed(title="commands", description="", color=0xeee657)
     embed.set_footer(text='help command 3/4.')
@@ -174,10 +174,10 @@ async def help3(ctx):
     embed.add_field(name="pat", value="погладить участника сервера", inline=True)
     await ctx.send(embed=embed)
 
-@bot.command(pass_context=True, aliases=["help 4"])
+@bot.command(aliases=["help 4"])
 async def help4(ctx):
     embed = discord.Embed(title="commands", description="", color=0xeee657)
-    embed.set_footer(text='help command 3/4.')
+    embed.set_footer(text='help command 4/4.')
     embed.add_field(name="setprefix", value="изменить префикс бота", inline=True)
     await ctx.send(embed=embed)
 
