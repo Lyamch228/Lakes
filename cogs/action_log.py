@@ -15,7 +15,7 @@ class Action_log(Cog, command_attrs=dict(hidden=True)):
     async def on_message_delete(self, message):
         if message.guild is None: return
         if message.author.bot: return
-        channel = get(message.guild.text_channels, name="❗║аудит", "#📮логи")
+        channel = get(message.guild.text_channels, name="#📮логи")
         if channel is None: return
         e = Embed(color=Color.red(), timestamp=datetime.utcnow(),
         description=f"**message sent by {message.author.mention} deleted in <#{message.channel.id}>**\n{message.content}",)
