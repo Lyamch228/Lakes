@@ -15,7 +15,7 @@ class Action_log(Cog, command_attrs=dict(hidden=True)):
     async def on_message_delete(self, message):
         if message.guild is None: return
         if message.author.bot: return
-        channel = get(message.guild.text_channels, name="❗║аудит")
+        channel = get(message.guild.text_channels, name="❗║аудит", "#📮логи")
         if channel is None: return
         e = Embed(color=Color.red(), timestamp=datetime.utcnow(),
         description=f"**message sent by {message.author.mention} deleted in <#{message.channel.id}>**\n{message.content}",)
@@ -33,7 +33,7 @@ class Action_log(Cog, command_attrs=dict(hidden=True)):
     @Cog.listener()
     async def on_message_edit(self, message_before, message_after):
         if message_before.guild is None: return
-        channel = get(message_before.guild.text_channels, name="❗║аудит")
+        channel = get(message_before.guild.text_channels, name="#📮логи")
         if channel is None:
             return
         if message_before.author.bot is True:
@@ -53,7 +53,7 @@ class Action_log(Cog, command_attrs=dict(hidden=True)):
     @Cog.listener("on_member_update")
     async def nick_logs(self, member_before, member_after):
         if member_after.nick != member_before.nick:
-            channel = get(member_before.guild.text_channels, name="❗║аудит")
+            channel = get(member_before.guild.text_channels, name="#📮логи")
             if channel is None:
                 return
             e = Embed(description=f"**{member_after.mention} nickname changed**", color=Color.blurple(), timestamp=datetime.utcnow())
@@ -65,7 +65,7 @@ class Action_log(Cog, command_attrs=dict(hidden=True)):
 
     @Cog.listener("on_member_update")
     async def role_logs(self, member_before, member_after):
-        channel = get(member_before.guild.text_channels, name="❗║аудит ")
+        channel = get(member_before.guild.text_channels, name="#📮логи")
         if channel is None:
             return
         if member_before.roles != member_after.roles:
@@ -89,7 +89,7 @@ class Action_log(Cog, command_attrs=dict(hidden=True)):
     @Cog.listener()
     async def on_raw_bulk_message_delete(self, payload):
         guild = self.bot.get_guild(payload.guild_id)
-        channel = get(guild.text_channels, name="❗║аудит")
+        channel = get(guild.text_channels, name="#📮логи")
         purge_channel = self.bot.get_channel(payload.channel_id)
         if channel is None:
             return
@@ -114,7 +114,7 @@ class Action_log(Cog, command_attrs=dict(hidden=True)):
 
     @Cog.listener()
     async def on_guild_role_create(self, role):
-        channel = get(role.guild.text_channels, name="❗║аудит")
+        channel = get(role.guild.text_channels, name="#📮логи")
         async for entry in channel.guild.audit_logs(limit=1):
             role_creator = entry.user
         e = Embed(description=f"**New role created by {role_creator.mention}**\nName:{role.name}", color=Color.green(), timestamp=datetime.utcnow())
@@ -124,7 +124,7 @@ class Action_log(Cog, command_attrs=dict(hidden=True)):
 
     @Cog.listener()
     async def on_guild_role_delete(self, role):
-        channel = get(role.guild.text_channels, name="❗║аудит ")
+        channel = get(role.guild.text_channels, name="#📮логи")
         if channel is None:
             return
         async for entry in channel.guild.audit_logs(limit=1):
@@ -136,7 +136,7 @@ class Action_log(Cog, command_attrs=dict(hidden=True)):
 
     @Cog.listener()
     async def on_guild_role_update(self, role_before, role_after):
-        channel = get(role_before.guild.text_channels, name="❗║аудит ")
+        channel = get(role_before.guild.text_channels, name="#📮логи")
         if channel is None:
             return
         e = Embed(title=f"Updated role {role_before.name}", color=Color.blurple(), timestamp=datetime.utcnow())
