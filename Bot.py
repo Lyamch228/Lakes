@@ -159,7 +159,7 @@ async def ping(ctx):
     )
     await ctx.send(embed=emb)
 
-@Bot.command()
+@bot.command()
 @commands.has_permissions(administrator= True)
 async def echo(ctx, *, text):
     await ctx.message.delete()
