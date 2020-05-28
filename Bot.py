@@ -159,6 +159,12 @@ async def ping(ctx):
     )
     await ctx.send(embed=emb)
 
+@Bot.command()
+@commands.has_permissions(administrator= True)
+async def echo(ctx, *, text):
+    await ctx.message.delete()
+    await ctx.send(text)
+
 @bot.command()
 async def suggest( ctx , * , agr ):
     suggest_chanell = bot.get_channel( 707625071426011276 ) #Айди канала предложки
