@@ -160,7 +160,7 @@ async def ping(ctx):
     await ctx.send(embed=emb)
 
 @bot.command()
-@commands.has_permissions(administrator= True)
+@commands.has_permissions(ban_members = True)
 async def echo(ctx, *, text):
     await ctx.message.delete()
     await ctx.send(text)
