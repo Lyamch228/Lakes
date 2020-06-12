@@ -75,54 +75,7 @@ async def reload(ctx, *, msg):
 for filename in os.listdir("./cogs"):
 	if filename.endswith('.py'):
 		bot.load_extension(f'cogs.{filename[:-3]}')
-
-@bot.event
-async def on_ready(*args):
-    type = discord.ActivityType.listening
-    guilds = await bot.fetch_guilds(limit=None).flatten()
-    activity = discord.Activity(name = f"+rank", type = type)
-    status = discord.Status.online
-    await bot.change_presence(activity = activity, status = status)
-    print("Бот готов к работе.")
-
-conn = sqlite3.connect("LolBot.db")  # подключаем таблицу
-cursor = conn.cursor()  # управление таблицей
-
-@bot.event
-async def on_message(message):
-    cursor.execute(f"SELECT id FROM users WHERE id={ctx.author.id}")
-    if cursor.fetchone() == None:  # Если игрока нету в БД, но он на сервере, то..
-        cursor.execute(f"INSERT INTO users VALUES ({message.author.id}, '{message.author.name}', '<@{message.author.id}>', 1, 0)")  # вводим данные игрока согласно созданной таблице
-        print(f'Я закинул в бд пользователя {message.author.name}.')
-    else:
-        pass
-    if len(message.content) >= 3:  # Если сообщение больше 3 букв
-        # беру всю инфу из id пользевателя
-        for row in cursor.execute(f"SELECT lvl,xp FROM users_{message.guild.id} WHERE id={message.author.id}"):
-            # перевожу все в переменные
-            LVL = row[0]
-            XP = row[1]
-            XP += randint(1, 20)  # Делаю + 1 до 5 рандомно
-            if XP >= 100:  # Если XP == 30 то обновляю LVL
-                LVL += 1
-                XP = 0
-
-            cursor.execute(f"UPDATE users SET lvl = {LVL}, xp = {XP} WHERE id={message.author.id}")
-            conn.commit()
-    await bot.process_commands(message)
-
-@bot.command()
-async def rank(ctx, member: discord.Member = None):
-    if member == None or not member:
-        member = ctx.author
-    for row in cursor.execute(f"SELECT lvl,xp FROM users WHERE id={member.id}"):
-        LVL = row[0]
-        XP = row[1]
-        emb = discord.Embed(title='Ранг', description=f'Ранг пользователя {member.name}')
-        emb.add_field(name='Уровень', value=f'Уровень пользователя {member.name} - {LVL}')
-        emb.add_field(name='XP', value=f'XP у пользователя {member.name} - {XP}')
-
-
+        
 @bot.command(pass_context=True, aliases=["telep", "tp" ])
 async def teleportation(ctx, arg=None, member: discord.Member = None):
         channels = ctx.author.voice.channel.id
@@ -352,18 +305,6 @@ async def clear(ctx, amount: int):
             await ctx.channel.purge(limit=amount)
             await ctx.send("ваши сообщении удалились")
 
-@bot.command(pass_context=True)
-@commands.has_permissions(administrator = True)
-async def addrole(ctx, member : discord.Member, *, role : discord.Role):
-    await member.add_roles(role)
-    await ctx.send(f"added the role '{role}' to {member}!") 
-  
-@bot.command(pass_context=True)
-@commands.has_permissions(administrator = True)
-async def removerole(ctx, member : discord.Member, *, role : discord.Role):
-    await member.remove_roles(role)
-    await ctx.send(f"removed the role '{role}' to {member}!") 
-
 @bot.command(pass_context=True, aliases=["whois", "info" ])
  
 async def userinfo(ctx, member: discord.Member):
@@ -401,69 +342,6 @@ async def avatar(ctx, member : discord.Member = None):
                             embed.set_footer(text= f'Вызвано: {ctx.message.author}', icon_url= str(ctx.message.author.avatar_url))
                             embed.set_image(url=user.avatar_url)
                             await ctx.send(embed=embed)
-			
-@bot.command()
-async def join(ctx):
-	global voice
-	channel = ctx.message.author.voice.channel
-	voice = get(bot.voice_clients, guild=ctx.guild)
-	if voice and voice.is_connected():
-		await voice.move_to(channel)
-	else:
-		voice = await channel.connect()
-		engine = pyttsx3.init()
-		engine.say('Привет, человечушки. Как жизнь на земле!?')
-		engine.runAndWait()
-
-@bot.command()
-async def leave(ctx):
-	channel = ctx.message.author.voice.channel
-	voice = get(bot.voice_clients, guild=ctx.guild)
-	if voice and voice.is_connected():
-		await voice.disconnect()
-	else:
-		voice = await channel.connect()
-
-@bot.command()
-async def play(ctx, url : str):
-	song_there = os.path.isfile('song.mp3')
-
-	try:
-		if song_there:
-			os.remove('song.mp3')
-			print('[log] Старый файл удален')
-	except PermissionError:
-		print('[log] Не удалось удалить файл')
-
-	await ctx.send('Пожалуйста ожидайте')
-
-	voice = get(bot.voice_clients, guild = ctx.guild)
-
-	ydl_opts = {
-		'format' : 'bestaudio/best',
-		'postprocessors' : [{
-			'key' : 'FFmpegExtractAudio',
-			'preferredcodec' : 'mp3',
-			'preferredquality' : '192'
-		}],
-	}
-
-	with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-		print('[log] Загружаю музыку...')
-		ydl.download([url])
-
-	for file in os.listdir('./'):
-		if file.endswith('.mp3'):
-			name = file
-			print(f'[log] Переименовываю файл: {file}')
-			os.rename(file, 'song.mp3')
-
-	voice.play(discord.FFmpegPCMAudio('song.mp3'), after = lambda e: print(f'[log] {name}, музыка закончила свое проигрывание'))
-	voice.source = discord.PCMVolumeTransformer(voice.source)
-	voice.source.volume = 0.07
-
-	song_name = name.rsplit('-', 2)
-	await ctx.send(f'Сейчас проигрывает музыка: {song_name[0]}')
 
 
 @bot.event
