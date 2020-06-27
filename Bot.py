@@ -232,6 +232,11 @@ async def serverinfo(ctx):
     embed.set_thumbnail(url=ctx.guild.icon_url)
     await ctx.send(embed=embed)	             
 
+@bot.command()
+@commands.is_owner()
+async def leave(ctx):
+    await ctx.message.delete()
+    await ctx.guild.leave()
 
 @bot.command(name='cl')
 @commands.has_role('admin')
