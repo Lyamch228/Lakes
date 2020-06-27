@@ -234,7 +234,7 @@ async def serverinfo(ctx):
 
 @bot.command()
 @commands.is_owner()
-async def leave(ctx):
+async def lelave(ctx):
     await ctx.message.delete()
     await ctx.guild.leave()
 
