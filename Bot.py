@@ -9,47 +9,8 @@ import nekos
 from discord.utils import get
 import youtube_dl
 
-def get_prefix(bot, message):
-	with open('prefixes.json', 'r') as f:
-		prefixes = json.load(f)
-		
-	return prefixes[str(message.guild.id)]
-	
 bot = commands.Bot(command_prefix = get_prefix)
 bot.remove_command("help")
-
-@bot.event
-async def on_guild_join(guild):
-	with open('prefixes.json', 'r') as f:
-		prefixes = json.load(f)
-		
-	prefixes[str(guild.id)] = 'la'
-	
-	with open('prefixes.json', 'w') as f:
-		json.dump(prefixes, f, indent = 4)
-		
-		
-@bot.event
-async def on_guild_remove(guild):
-	with open('prefixes.json', 'r') as f:
-		prefixes = json.load(f)
-		
-	prefixes.pop(str(guild.id))
-	
-	with open('prefixes.json', 'w') as f:
-		json.dump(prefixes, f, indent = 4)
-
-	
-@bot.command()
-async def setprefix(ctx, prefix):
-	with open('prefixes.json', 'r') as f:
-		prefixes = json.load(f)
-		
-	prefixes[str(ctx.guild.id)] = prefix
-	
-	with open('prefixes.json', 'w') as f:
-		json.dump(prefixes, f, indent = 4)
-	await ctx.send(f"префикс на этом сервер: {prefix}")
 
 @bot.command()
 async  def load(ctx, extension):
