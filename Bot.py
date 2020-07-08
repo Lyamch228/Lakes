@@ -9,7 +9,7 @@ import nekos
 from discord.utils import get
 import youtube_dl
 
-bot = commands.Bot(command_prefix = get_prefix)
+bot = commands.Bot(command_prefix = "+")
 bot.remove_command("help")
 bot.load_extension("jishaku")
 
