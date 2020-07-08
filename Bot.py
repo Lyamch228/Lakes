@@ -321,22 +321,18 @@ async def on_message(message):
             await message.author.send("Не-а, я не хочу чтобы ты меня задудосил ошибками в консоли от того что некоторые команды не приспособны к личке.")
 
 @bot.command()
-async def wiki(ctx, *, text):
+async def wiki(ctx, *, args):
+  try:
     wikipedia.set_lang("ru")
-    STEP = 1000
-    k = 0
-    s = ''
-    summ = wikipedia.summary(text)
-    for i in summ:        
-        s += i
-        k += 1
-        if k == STEP:
-            emb = discord.Embed(title = text,
-                                colour = discord.Colour.green(),
-                                description = s
-                                )
-            await ctx.send(embed = emb)
-            k = 0
-            s = ''
+    new_page = wikipedia.page(f'{args}')
+    summ = wikipedia.summary(f'{args}', sentences=5)
+    emb = discord.Embed(title=new_page.title,
+                        description=f"{summ}",
+                        color=0xc582ff)
+    emb.add_field(name="Для полного ознакомления со статьей, перейдите по ссылке:", value=f"[M]({new_page.url})")
+    await ctx.send(embed=emb)
+  except Exception:
+    return await ctx.send('Неоднозначный аргумент, уточните статью', delete_after=10)
+    await ctx.send(embed = emb)
 	
 bot.run(os.getenv('TOKEN'))
