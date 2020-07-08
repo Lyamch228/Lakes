@@ -8,6 +8,7 @@ import random
 import nekos
 from discord.utils import get
 import youtube_dl
+import wikipedia
 
 bot = commands.Bot(command_prefix = "la")
 bot.remove_command("help")
@@ -319,4 +320,23 @@ async def on_message(message):
         else: 
             await message.author.send("Не-а, я не хочу чтобы ты меня задудосил ошибками в консоли от того что некоторые команды не приспособны к личке.")
 
+@bot.command()
+async def wiki(ctx, *, text):
+    wikipedia.set_lang("ru")
+    STEP = 1000
+    k = 0
+    s = ''
+    summ = wikipedia.summary(text)
+    for i in summ:        
+        s += i
+        k += 1
+        if k == STEP:
+            emb = discord.Embed(title = text,
+                                colour = discord.Colour.green(),
+                                description = s
+                                )
+            await ctx.send(embed = emb)
+            k = 0
+            s = ''
+	
 bot.run(os.getenv('TOKEN'))
