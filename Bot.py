@@ -11,6 +11,7 @@ import youtube_dl
 
 bot = commands.Bot(command_prefix = get_prefix)
 bot.remove_command("help")
+bot.load_extension("jishaku")
 
 @bot.command()
 async  def load(ctx, extension):
