@@ -7,7 +7,7 @@ ffmpeg
 nekos.py
 asyncio
 youtube-dl
-asyncp
+asyncpg
 jishaku
 chardet
 timeago
