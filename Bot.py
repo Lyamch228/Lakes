@@ -147,7 +147,18 @@ async def шар(ctx, *, question):
 	             "Хорошие перспективы :ok_hand:",
 	             "мой ответ, нет :no_entry_sign:",
 	             "нет, и никогда."]))
-	             
+
+	
+@bot.command()
+async def tempmute(ctx, member: discord.Member, time:int, reason):
+	muterole = discord.utils.get(ctx.guild.roles, id = 730731372657770527)
+	emb = discord.Embed(title='Мут', color=0xff0000)
+	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
+	emb.add_field(name='Причина',value=reason,inline=False)
+	emb.add_field(name='Время',value=time,inline=False)
+	emb.add_field(name='Нарушение',value=member.mention,inline=False)
+	await ctx.send_message(ctx.member.mention)
+
 @bot.command()
 async def serverinfo(ctx):
     embed = discord.Embed(name="{}'s info".format(ctx.guild.name), description="Информация о сервере.", color=0x000000)
