@@ -131,7 +131,7 @@ async def help(ctx):
 	embed4.add_field(name=f'laslap', value='шлепнуть участника')
 	embed4.add_field(name=f'lateleportation', value='телепортировать участника с одного голосового канала на другой')
 	
-	reactions = ["◀️", "▶️", "⏮", "⏭"]
+	reactions = ["◀️", "▶️","⏹", "⏮", "⏭"]
 	react = "⏹"
 	
 	embeds = [embed1, embed2, embed3, embed4]
