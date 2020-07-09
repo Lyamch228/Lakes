@@ -138,7 +138,7 @@ async def help(ctx):
 	
 	reactions = ["🔫", "📚", "📙", "📘"]
 	
-	embeds = [embed1, embed2, embed3] [embed4, embed5]
+	embeds = [embed1, embed2, embed3, embed4, embed5]
 	msg = await ctx.send(embed = embed1)
 	page = pag(bot, msg, only=ctx.author, use_more=True, embeds=embeds, reactions = reactions)
 	await page.start();
