@@ -157,7 +157,7 @@ async def tempmute(ctx, member: discord.Member, time:int, reason):
 	emb.add_field(name='Причина',value=reason,inline=False)
 	emb.add_field(name='Время',value=time,inline=False)
 	emb.add_field(name='Нарушение',value=member.mention,inline=False)
-	await ctx.send(ctx.member.mention)
+	await ctx.send(embed = emb)
 
 @bot.command()
 async def serverinfo(ctx):
