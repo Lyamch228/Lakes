@@ -112,35 +112,31 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx):
-	embed1 = discord.Embed(title = 'Страница **0**')
-	embed1.add_field(name=f'🔫', value='Игры')
-	embed1.add_field(name=f'📙', value='Модерация')
-	embed1.add_field(name=f'📚', value='информация')
-	embed1.add_field(name=f'📘', value='фан')
-	embed2 = discord.Embed(title = 'Игры 🔫')
-	embed2.add_field(name=f'lasaper', value='Команда для игры --"сапёр"')
-	embed2.add_field(name=f'laknb', value='Команда для игры --"камень, ножницы, бумага"')
-	embed2.add_field(name=f'laшар', value='Команда для игры --"шар"')
-	embed3 = discord.Embed(title = 'Модерация 📚')
-	embed3.add_field(name=f'lamute', value='lamute <участник> (время) <причина>')
-	embed3.add_field(name=f'laban', value='laban <участник> (время) <причина>')
-	embed3.add_field(name=f'lakick', value='lakick <участник> <причина>')
-	embed3.add_field(name=f'launmute', value='launmute <участник>')
-	embed4 = discord.Embed(title = 'Информация 📙')
-	embed4.add_field(name=f'laserverinfo', value='Информация о сервере')
-	embed4.add_field(name=f'lauserinfo', value='Информация о Участнике')
-	embed4.add_field(name=f'laavatar', value='аватар участника')
-	embed5 = discord.Embed(title = 'Фан 📘')
-	embed5.add_field(name=f'lakiss', value='поцеловать участника')
-	embed5.add_field(name=f'lahug', value='обнять участника')
-	embed5.add_field(name=f'laslap', value='шлепнуть участника')
-	embed5.add_field(name=f'lateleportation', value='телепортировать участника с одного голосового канала на другой')
+	embed1 = discord.Embed(title = 'Игры 🔫')
+	embed1.add_field(name=f'lasaper', value='Команда для игры --"сапёр"')
+	embed1.add_field(name=f'laknb', value='Команда для игры --"камень, ножницы, бумага"')
+	embed1.add_field(name=f'laшар', value='Команда для игры --"шар"')
+	embed2 = discord.Embed(title = 'Модерация 📚')
+	embed2.add_field(name=f'lamute', value='lamute <участник> (время) <причина>')
+	embed2.add_field(name=f'laban', value='laban <участник> (время) <причина>')
+	embed2.add_field(name=f'lakick', value='lakick <участник> <причина>')
+	embed2.add_field(name=f'launmute', value='launmute <участник>')
+	embed3 = discord.Embed(title = 'Информация 📙')
+	embed3.add_field(name=f'laserverinfo', value='Информация о сервере')
+	embed3.add_field(name=f'lauserinfo', value='Информация о Участнике')
+	embed3.add_field(name=f'laavatar', value='аватар участника')
+	embed4 = discord.Embed(title = 'Фан 📘')
+	embed4.add_field(name=f'lakiss', value='поцеловать участника')
+	embed4.add_field(name=f'lahug', value='обнять участника')
+	embed4.add_field(name=f'laslap', value='шлепнуть участника')
+	embed4.add_field(name=f'lateleportation', value='телепортировать участника с одного голосового канала на другой')
 	
-	reactions = ["🔫", "📚", "📙", "📘"]
+	reactions = ["◀️", "▶️", "⏮", "⏭"]
+	react = "⏹"
 	
 	embeds = [embed1, embed2, embed3, embed4, embed5]
 	msg = await ctx.send(embed = embed1)
-	page = pag(bot, msg, only=ctx.author, use_more=True, embeds=embeds, more_reactions = reactions)
+	page = pag(bot, msg, only=ctx.author, use_more=True, embeds=embeds, more_reactions = reactions, exit_reaction = react)
 	await page.start();
 
 @bot.command()
