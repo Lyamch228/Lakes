@@ -131,12 +131,9 @@ async def help(ctx):
 	embed4.add_field(name=f'laslap', value='шлепнуть участника')
 	embed4.add_field(name=f'lateleportation', value='телепортировать участника с одного голосового канала на другой')
 	
-	reactions = ["◀️", "▶️","⏹", "⏮", "⏭"]
-	react = "⏹"
-	
 	embeds = [embed1, embed2, embed3, embed4]
 	msg = await ctx.send(embed = embed1)
-	page = pag(bot, msg, only=ctx.author, use_more=True, embeds=embeds, more_reactions = reactions, exit_reaction = react)
+	page = pag(bot, msg, only=ctx.author, use_more=True, embeds=embeds)
 	await page.start();
 
 @bot.command()
