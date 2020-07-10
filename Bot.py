@@ -151,7 +151,7 @@ async def шар(ctx, *, question):
 	
 @bot.command()
 async def tempmute(ctx, member: discord.Member, time:int, reason):
-	muterole = discord.utils.get(ctx.guild.roles, id = 730731372657770527)
+	muterole = discord.utils.get(ctx.guild.roles, id = 707612817204838491)
 	emb = discord.Embed(title='Мут', color=0xff0000)
 	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
 	emb.add_field(name='Причина',value=reason,inline=False)
