@@ -353,7 +353,6 @@ async def unmute(ctx, member: discord.Member):
 	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
 	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
 	await member.send(embed = emb)
-	
 
 @bot.command()
 @commands.has_permissions(view_audit_log = True)
