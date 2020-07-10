@@ -341,7 +341,7 @@ async def tempmute(ctx, member: discord.Member, time:int, reason):
 	emb.add_field(name='Время',value=time,inline=False)
 	emb.add_field(name='Нарушение',value=member.mention,inline=False)
 	await member.add_roles(muterole)
-	await discord.Member.send(embed = emb)
+	await member.send(embed = emb)
 	await asyncio.sleep(time)
 	await member.remove_roles(muterole)
 
