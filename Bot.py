@@ -339,10 +339,43 @@ async def tempmute(ctx, member: discord.Member, time:int, reason):
 	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
 	emb.add_field(name='Причина',value=reason,inline=False)
 	emb.add_field(name='Время',value=time,inline=False)
-	emb.add_field(name='Нарушение',value=member.mention,inline=False)
+	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
 	await member.add_roles(muterole)
 	await member.send(embed = emb)
 	await asyncio.sleep(time)
 	await member.remove_roles(muterole)
+
+@bot.command()
+@commands.has_permissions(view_audit_log = True)
+async def unmute(ctx, member: discord.Member):
+	muterole = discord.utils.get(ctx.guild.roles, id = 707612817204838491)
+	emb = discord.Embed(title='АнМут', color=0xff0000)
+	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
+	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
+	await member.send(embed = emb)
+	
+
+@bot.command()
+@commands.has_permissions(view_audit_log = True)
+async def kick(ctx, member: discord.Member):
+	emb = discord.Embed(title='Кик', color=0xff0000)
+	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
+	emb.add_field(name='Причина',value=reason,inline=False)
+	emb.add_field(name='Время',value=time,inline=False)
+	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
+	await member.kick()
+	await member.send(embed = emb)
+
+@bot.command()
+@commands.has_permissions(view_audit_log = True)
+async def ban(ctx, member: discord.Member, time:int, reason):
+	emb = discord.Embed(title='ban', color=0xff0000)
+	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
+	emb.add_field(name='Причина',value=reason,inline=False)
+	emb.add_field(name='Время',value=time,inline=False)
+	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
+	await member.send(embed = emb)
+	await asyncio.sleep(time)
+	await member.ban()
 
 bot.run(os.getenv('TOKEN'))
