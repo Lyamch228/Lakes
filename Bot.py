@@ -148,8 +148,11 @@ async def шар(ctx, *, question):
 	             "мой ответ, нет :no_entry_sign:",
 	             "нет, и никогда."]))
 
-	
+
+
+
 @bot.command()
+@commands.has_permissions(view_audit_log = True)
 async def tempmute(ctx, member: discord.Member, time:int, reason):
 	muterole = discord.utils.get(ctx.guild.roles, id = 707612817204838491)
 	emb = discord.Embed(title='Мут', color=0xff0000)
