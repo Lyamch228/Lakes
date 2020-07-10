@@ -148,20 +148,6 @@ async def шар(ctx, *, question):
 	             "мой ответ, нет :no_entry_sign:",
 	             "нет, и никогда."]))
 
-
-
-
-@bot.command()
-@commands.has_permissions(view_audit_log = True)
-async def tempmute(ctx, member: discord.Member, time:int, reason):
-	muterole = discord.utils.get(ctx.guild.roles, id = 707612817204838491)
-	emb = discord.Embed(title='Мут', color=0xff0000)
-	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
-	emb.add_field(name='Причина',value=reason,inline=False)
-	emb.add_field(name='Время',value=time,inline=False)
-	emb.add_field(name='Нарушение',value=member.mention,inline=False)
-	await ctx.send(embed = emb)
-
 @bot.command()
 async def serverinfo(ctx):
     embed = discord.Embed(name="{}'s info".format(ctx.guild.name), description="Информация о сервере.", color=0x000000)
@@ -343,5 +329,17 @@ async def saper(ctx):
 1️⃣||||2️⃣||||1️⃣||||1️⃣||||1️⃣||||1️⃣||||1️⃣||||1️⃣||||💥||||1️⃣||
     ''', color=discord.Colour.orange())
     await ctx.send(embed=embed)
+
+
+@bot.command()
+@commands.has_permissions(view_audit_log = True)
+async def tempmute(ctx, member: discord.Member, time:int, reason):
+	muterole = discord.utils.get(ctx.guild.roles, id = 707612817204838491)
+	emb = discord.Embed(title='Мут', color=0xff0000)
+	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
+	emb.add_field(name='Причина',value=reason,inline=False)
+	emb.add_field(name='Время',value=time,inline=False)
+	emb.add_field(name='Нарушение',value=member.mention,inline=False)
+	await ctx.send(embed = emb)
 
 bot.run(os.getenv('TOKEN'))
