@@ -342,6 +342,6 @@ async def tempmute(ctx, member: discord.Member, time:int, reason):
 	emb.add_field(name='Нарушение',value=member.mention,inline=False)
 	await member.add_roles(muterole)
 	await asyncio.sleep(time)
-	await ctx.discord.Member.send(embed = emb)
+	await discord.Member.send(embed = emb)
 
 bot.run(os.getenv('TOKEN'))
