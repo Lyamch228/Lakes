@@ -374,7 +374,8 @@ async def ban(ctx, member: discord.Member, time:int, reason):
 	emb.add_field(name='Время',value=time,inline=False)
 	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
 	await member.send(embed = emb)
-	await asyncio.sleep(time)
 	await member.ban()
+	await asyncio.sleep(time)
+	
 
 bot.run(os.getenv('TOKEN'))
