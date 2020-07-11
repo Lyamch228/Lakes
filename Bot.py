@@ -376,6 +376,7 @@ async def ban(ctx, member: discord.Member, time:int, reason):
 	await member.send(embed = emb)
 	await member.ban()
 	await asyncio.sleep(time)
+        await member.unban()
 	
 
 bot.run(os.getenv('TOKEN'))
