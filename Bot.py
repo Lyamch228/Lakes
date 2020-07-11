@@ -373,9 +373,9 @@ async def ban(ctx, member: discord.Member, time:int, reason):
 	emb.add_field(name='Причина',value=reason,inline=False)
 	emb.add_field(name='Время',value=time,inline=False)
 	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
-	        if user != None:
-            if user == ctx.message.author:
-                await ctx.send('Вы не можете банить себя')
+	if user != None:
+	               if user == ctx.message.author:
+	               	await ctx.send('Вы не можете банить себя')
 	await member.send(embed = emb)
 	await member.ban()
 	await asyncio.sleep(time)
