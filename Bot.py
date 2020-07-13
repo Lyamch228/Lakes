@@ -84,7 +84,7 @@ async def echo(ctx, *, text):
 
 @bot.command()
 async def suggest( ctx , * , agr ):
-    suggest_chanell = bot.get_channel( 707625071426011276 ) #Айди канала предложки
+    suggest_chanell = bot.get_channel( 731928849968791616 ) #Айди канала предложки
     embed = discord.Embed(title=f"{ctx.author.name} Предложил :", description= f" {agr} \n\n")
 
     embed.set_thumbnail(url=ctx.guild.icon_url)
@@ -125,6 +125,7 @@ async def help(ctx):
 	embed3.add_field(name=f'laserverinfo', value='Информация о сервере')
 	embed3.add_field(name=f'lauserinfo', value='Информация о Участнике')
 	embed3.add_field(name=f'laavatar', value='аватар участника')
+	embed3.add_field(name=f'lasuggest', value='идеи для сервера')
 	embed4 = discord.Embed(title = 'Фан 📘')
 	embed4.add_field(name=f'lakiss', value='поцеловать участника')
 	embed4.add_field(name=f'lahug', value='обнять участника')
