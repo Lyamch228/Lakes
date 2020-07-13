@@ -90,8 +90,8 @@ async def suggest( ctx , * , agr ):
     embed.set_thumbnail(url=ctx.guild.icon_url)
 
     message = await suggest_chanell.send(embed=embed)
-    await message.add_reaction(':white_check_mark:')
-    await message.add_reaction(':negative_squared_cross_mark:')
+    await message.add_reaction('✔')
+    await message.add_reaction('✖')
 
 @bot.command()
 @commands.has_permissions(ban_members=True)
