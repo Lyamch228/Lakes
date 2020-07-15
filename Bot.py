@@ -11,7 +11,7 @@ from discord.utils import get
 import youtube_dl
 import wikipedia
 
-bot = commands.Bot(command_prefix = "la")
+bot = commands.Bot(command_prefix = "la", "La")
 bot.remove_command("help")
 bot.load_extension("jishaku")
 
