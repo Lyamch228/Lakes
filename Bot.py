@@ -84,7 +84,7 @@ async def echo(ctx, *, text):
 
 @bot.command()
 async def suggest( ctx , * , agr ):
-    suggest_chanell = bot.get_channel( 731928849968791616 ) #Айди канала предложки
+    suggest_chanell = bot.get_channel( 731928849968791616,  707625071426011276) #Айди канала предложки
     embed = discord.Embed(title=f"{ctx.author.name} Предложил :", description= f" {agr} \n\n")
 
     embed.set_thumbnail(url=ctx.guild.icon_url)
