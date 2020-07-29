@@ -92,6 +92,7 @@ async def suggest( ctx , * , agr ):
     message = await suggest_chanell.send(embed=embed)
     await message.add_reaction('✔')
     await message.add_reaction('✖')
+    await ctx.message.delete()
 
 @bot.command()
 @commands.has_permissions(ban_members=True)
