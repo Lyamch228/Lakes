@@ -65,10 +65,6 @@ async def teleportation(ctx, arg=None, member: discord.Member = None):
             await member.edit(voice_channel=vchannel)
 
 @bot.command()
-async def раковой(ctx):
-        await ctx.message("Раковой гей")
-
-@bot.command()
 async def ping(ctx):
     try:
         await ctx.message.delete()
