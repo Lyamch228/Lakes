@@ -11,6 +11,7 @@ class LD:
 
 	
     @commands.group(invoke_without_command=True)
+        @commands.has_permissions(Administrator=True)
     async def lockdown(self, ctx):
         """Server/Channel lockdown"""
         pass
