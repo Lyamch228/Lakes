@@ -4,7 +4,7 @@ import datetime
 import asyncio
 import random
 
-class Mod:
+class LD:
  
     def __init__(self, bot):
         self.bot = bot
@@ -44,4 +44,4 @@ class Mod:
  
  
 def setup(bot):
-	bot.add_cog(Mod(bot))
+	bot.add_cog(LD(bot))
