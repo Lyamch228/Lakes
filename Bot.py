@@ -333,19 +333,6 @@ async def saper(ctx):
     await ctx.send(embed=embed)
 
 
-@bot.command()
-@commands.has_permissions(view_audit_log = True)
-async def tempmute(ctx, member: discord.Member, time:int, reason):
-	muterole = discord.utils.get(ctx.guild.roles, id = 707612817204838491)
-	emb = discord.Embed(title='Мут', color=0xff0000)
-	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
-	emb.add_field(name='Причина',value=reason,inline=False)
-	emb.add_field(name='Время',value=time,inline=False)
-	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
-	await member.add_roles(muterole)
-	await member.send(embed = emb)
-	await asyncio.sleep(time)
-	await member.remove_roles(muterole)
 
 @bot.command()
 @commands.has_permissions(view_audit_log = True)
