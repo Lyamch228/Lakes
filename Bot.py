@@ -133,7 +133,7 @@ async def help(ctx):
 	embed4.add_field(name=f'lateleportation', value='телепортировать участника с одного голосового канала на другой')
 	embeds = [embed1, embed2, embed3, embed4]
 	message = await ctx.send(embed=embed1)
-	page = Paginator(bot, message, only=ctx.author, use_more=False, embeds=embeds)
+	page = pag(bot, message, only=ctx.author, use_more=False, embeds=embeds)
 	await page.start()
 
 @bot.command(aliases =['8ball'])
