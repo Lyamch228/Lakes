@@ -2,7 +2,6 @@ import discord
 import os
 import asyncio
 import json
-import sqlite3
 from discord.ext  import commands
 import random
 from Cybernator import Paginator as pag
@@ -134,9 +133,9 @@ async def help(ctx):
 	embed4.add_field(name=f'lateleportation', value='телепортировать участника с одного голосового канала на другой')
 	
 	embeds = [embed1, embed2, embed3, embed4]
-	msg = await ctx.send(embed = embed1)
-	page = pag(bot, msg, only=ctx.author, use_more=True, embeds=embeds)
-	await page.start();
+        message = await ctx.send(embed=embed1)
+        page = Paginator(bot, message, only=ctx.author, use_more=False, embeds=embeds)
+        await page.start()
 
 @bot.command(aliases =['8ball'])
 async def шар(ctx, *, question):
