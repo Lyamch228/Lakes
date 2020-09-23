@@ -166,7 +166,7 @@ async def lelave(ctx):
     await ctx.guild.leave()
 
 @bot.command(name='cl')
-@commands.has_role('admin')
+@commands.has_permissions(ban_members=True)
 async def create_channel(ctx, channel_name='real-python'):
     guild = ctx.guild
     existing_channel = discord.utils.get(guild.channels, name=channel_name)
