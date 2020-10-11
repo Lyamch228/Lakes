@@ -195,7 +195,7 @@ async def hug(ctx, member : discord.Member):
 @bot.command()
 async def slap(ctx, member : discord.Member):
     emb = discord.Embed(description= f'{member.mention}, Вас ударил(а) {ctx.message.author.mention}.')
-    emb.set_image(url=nekos.img('spal'))
+    emb.set_image(url=nekos.img('slap'))
     await ctx.send(embed=emb)
 
 @bot.command()
