@@ -183,7 +183,6 @@ async def gay(ctx):
 @bot.command()
 async def kiss(ctx, member : discord.Member):
     emb = discord.Embed(description= f'{member.mention}, Вас поцеловал(а) {ctx.message.author.mention}.')
-    emb.set_image(url=nekos.img('kiss'))
     await ctx.send(embed=emb)
 
 @bot.command()
