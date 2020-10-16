@@ -175,12 +175,6 @@ async def create_channel(ctx, channel_name='real-python'):
         await guild.create_text_channel(channel_name)
 
 @bot.command()
-async def gay(ctx):
-    random.randint(1, 100)
-    embed = discord.Embed(title = None, description=f"{ctx.author} is {random.randint(1, 100)}% gay.")
-    await ctx.send(embed=embed)
-
-@bot.command()
 async def kiss(ctx, member : discord.Member):
     emb = discord.Embed(description= f'{member.mention}, Вас поцеловал(а) {ctx.message.author.mention}.')
     await ctx.send(embed=emb)
