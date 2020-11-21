@@ -19,6 +19,11 @@ async  def load(ctx, extension):
 	bot.initial_extension(f'{extension}')
     
 @bot.command()
+async def setprefix(ctx, prefix):
+     bot.command_prefix = prefix
+     await ctx.send(f"Префикс изменен на ``{prefix}``")
+	
+@bot.command()
 async def reload(ctx, *, msg):
     """Load a module."""
     await ctx.message.delete()
