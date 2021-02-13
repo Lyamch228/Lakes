@@ -182,6 +182,7 @@ async def create_channel(ctx, channel_name='real-python'):
 @bot.command()
 async def kiss(ctx, member : discord.Member):
     emb = discord.Embed(description= f'{member.mention}, Вас поцеловал(а) {ctx.message.author.mention}.')
+    emb.set_image(url=nekos.img('kiss'))
     await ctx.send(embed=emb)
 
 @bot.command()
@@ -208,7 +209,11 @@ async def bite(ctx, member : discord.Member):
     emb.set_image(url=nekos.img('bite'))
     await ctx.send(embed=emb)
 
-	
+@bot.command()
+async def hentai(ctx, member : discord.Member):
+    emb.set_image(url=nekos.img('hentai'))
+    await ctx.send(embed=emb))
+
 @slap.error
 async def slap_error(ctx, error):
 	 if isinstance(error, commands.MissingRequiredArgument):
