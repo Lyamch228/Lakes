@@ -211,6 +211,7 @@ async def bite(ctx, member : discord.Member):
 
 @bot.command()
 async def hentai(ctx):
+    emb = discord.Embed(description= f'{member.mention}, Вас ебнул(а) {ctx.message.author.mention}.')
     emb.set_image(url=nekos.img('hentai'))
     await ctx.send(embed=emb)
 
