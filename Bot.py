@@ -212,7 +212,7 @@ async def bite(ctx, member : discord.Member):
 @bot.command()
 async def hentai(ctx, member : discord.Member):
     emb.set_image(url=nekos.img('hentai'))
-    await ctx.send(embed=emb))
+    await ctx.send(embed=emb)
 
 @slap.error
 async def slap_error(ctx, error):
