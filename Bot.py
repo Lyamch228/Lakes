@@ -210,11 +210,9 @@ async def bite(ctx, member : discord.Member):
     await ctx.send(embed=emb)
 
 @bot.command()
-async def hentai(ctx, member : discord.Member):
-    emb = discord.Embed(description= f'{member.mention}, Вас ебнул(а) {ctx.message.author.mention}.')
-    emb.set_image(url=nekos.img('hentai'))
-    await ctx.send(embed=emb)
-
+async def hentai(ctx)
+    emb.set_image(url=nekos.img('hentai')
+		  
 @slap.error
 async def slap_error(ctx, error):
 	 if isinstance(error, commands.MissingRequiredArgument):
