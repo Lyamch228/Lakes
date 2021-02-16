@@ -49,4 +49,4 @@ class NSFW(commands.Cog):
             await ctx.send( embed = emb, delete_after = 30)
 
 def setup(bot):
-    client.add_cog(NSFW(bot))
+    bot.add_cog(NSFW(bot))
