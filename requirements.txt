@@ -5,6 +5,7 @@ pynacl==1.2.1
 ffprobe
 ffmpeg
 nekos.py
+pillow
 wikipedia
 asyncio
 youtube-dl
@@ -14,3 +15,4 @@ Cybernator
 chardet
 timeago
 git+git://github.com/Rapptz/discord.py.git
+asyncpg
