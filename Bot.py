@@ -204,14 +204,9 @@ async def pat(ctx, member : discord.Member):
     await ctx.send(embed=emb)
 
 @bot.command()
-async def bite(ctx, member : discord.Member):
+async def hentai(ctx, member : discord.Member):
     emb = discord.Embed(description= f'{member.mention}, Вас укусил(а) {ctx.message.author.mention}.')
-    emb.set_image(url=nekos.img('bite'))
-    await ctx.send(embed=emb)
-
-@bot.command()
-async def hentai(ctx):
-    emb.set_image(url=nekos.img('hentai')
+    emb.set_image(url=nekos.img('hentai'))
     await ctx.send(embed=emb)
 		  
 @slap.error
