@@ -328,8 +328,6 @@ async def saper(ctx):
     ''', color=discord.Colour.orange())
     await ctx.send(embed=embed)
 
-
-
 @bot.command()
 @commands.has_permissions(view_audit_log = True)
 async def unmute(ctx, member: discord.Member):
