@@ -58,7 +58,8 @@ pynacl==1.2.1
 ffprobe
 ffmpeg
 nekos.py
-pillow
+Pillow>=6.0.0
+discord>=1.0.1
 wikipedia
 asyncio
 youtube-dl
