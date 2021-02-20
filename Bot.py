@@ -339,32 +339,4 @@ async def unmute(ctx, member: discord.Member):
 	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
 	await member.send(embed = emb)
 
-@bot.command()
-@commands.has_permissions(view_audit_log = True)
-async def kick(ctx, member: discord.Member):
-	emb = discord.Embed(title='Кик', color=0xff0000)
-	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
-	emb.add_field(name='Причина',value=reason,inline=False)
-	emb.add_field(name='Время',value=time,inline=False)
-	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
-	await member.kick()
-	await member.send(embed = emb)
-
-@bot.command()
-@commands.has_permissions(view_audit_log = True)
-async def ban(ctx, member: discord.Member, time:int, reason):
-	emb = discord.Embed(title='ban', color=0xff0000)
-	emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
-	emb.add_field(name='Причина',value=reason,inline=False)
-	emb.add_field(name='Время',value=time,inline=False)
-	emb.add_field(name='Нарушитель',value=member.mention,inline=False)
-	if member != None:
-	               if member == ctx.message.author:
-	               	await ctx.send('Вы не можете банить себя')
-	await member.send(embed = emb)
-	await member.ban()
-	await asyncio.sleep(time)
-	await member.unban()
-	
-
 bot.run(os.getenv('TOKEN'))
