@@ -141,18 +141,6 @@ async def help(ctx):
 	page = pag(bot, message, only=ctx.author, use_more=False, embeds=embeds)
 	await page.start()
 
-@bot.command(aliases =['8ball'])
-async def шар(ctx, *, question):
-	await ctx.send(random.choice(["конечно",
-	           "да",
-	           "предврешено!",
-	            "нет",
-	             "конечно, нет",
-	             "соглашусь",
-	             "Хорошие перспективы :ok_hand:",
-	             "мой ответ, нет :no_entry_sign:",
-	             "нет, и никогда."]))
-
 @bot.command()
 async def serverinfo(ctx):
     embed = discord.Embed(name="{}'s info".format(ctx.guild.name), description="Информация о сервере.", color=0x000000)
