@@ -1,490 +1,550 @@
-import asyncio
-import functools
-import itertools
 import math
-import random
-from discord import FFmpegPCMAudio
-import ffmpeg
+import os
+import re
 
+import aiohttp
 import discord
-import youtube_dl
-from async_timeout import timeout
+import lavalink
 from discord.ext import commands
 
-# Silence useless bug reports messages
-youtube_dl.utils.bug_reports_message = lambda: ''
-
-
-class VoiceError(Exception):
-    pass
-
-
-class YTDLError(Exception):
-    pass
-
-
-class YTDLSource(discord.PCMVolumeTransformer):
-    YTDL_OPTIONS = {
-        'format': 'bestaudio/best',
-        'extractaudio': True,
-        'audioformat': 'mp3',
-        'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-        'restrictfilenames': True,
-        'noplaylist': True,
-        'nocheckcertificate': True,
-        'ignoreerrors': False,
-        'logtostderr': False,
-        'quiet': True,
-        'no_warnings': True,
-        'default_search': 'auto',
-        'source_address': '0.0.0.0',
-    }
-
-    FFMPEG_OPTIONS = {
-        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-        'options': '-vn',
-    }
-
-    ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
-
-    def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, data: dict, volume: float = 0.5):
-        super().__init__(source, volume)
-
-        self.requester = ctx.author
-        self.channel = ctx.channel
-        self.data = data
-
-        self.uploader = data.get('uploader')
-        self.uploader_url = data.get('uploader_url')
-        date = data.get('upload_date')
-        self.upload_date = date[6:8] + '.' + date[4:6] + '.' + date[0:4]
-        self.title = data.get('title')
-        self.thumbnail = data.get('thumbnail')
-        self.description = data.get('description')
-        self.duration = self.parse_duration(int(data.get('duration')))
-        self.tags = data.get('tags')
-        self.url = data.get('webpage_url')
-        self.views = data.get('view_count')
-        self.likes = data.get('like_count')
-        self.dislikes = data.get('dislike_count')
-        self.stream_url = data.get('url')
-
-    def __str__(self):
-        return '**{0.title}** by **{0.uploader}**'.format(self)
-
-    @classmethod
-    async def create_source(cls, ctx: commands.Context, search: str, *, loop: asyncio.BaseEventLoop = None):
-        loop = loop or asyncio.get_event_loop()
-
-        partial = functools.partial(cls.ytdl.extract_info, search, download=False, process=False)
-        data = await loop.run_in_executor(None, partial)
-
-        if data is None:
-            raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
-
-        if 'entries' not in data:
-            process_info = data
-        else:
-            process_info = None
-            for entry in data['entries']:
-                if entry:
-                    process_info = entry
-                    break
-
-            if process_info is None:
-                raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
-
-        webpage_url = process_info['webpage_url']
-        partial = functools.partial(cls.ytdl.extract_info, webpage_url, download=False)
-        processed_info = await loop.run_in_executor(None, partial)
-
-        if processed_info is None:
-            raise YTDLError('Couldn\'t fetch `{}`'.format(webpage_url))
-
-        if 'entries' not in processed_info:
-            info = processed_info
-        else:
-            info = None
-            while info is None:
-                try:
-                    info = processed_info['entries'].pop(0)
-                except IndexError:
-                    raise YTDLError('Couldn\'t retrieve any matches for `{}`'.format(webpage_url))
-
-        return cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info)
-
-    @staticmethod
-    def parse_duration(duration: int):
-        minutes, seconds = divmod(duration, 60)
-        hours, minutes = divmod(minutes, 60)
-        days, hours = divmod(hours, 24)
-
-        duration = []
-        if days > 0:
-            duration.append('{} days'.format(days))
-        if hours > 0:
-            duration.append('{} hours'.format(hours))
-        if minutes > 0:
-            duration.append('{} minutes'.format(minutes))
-        if seconds > 0:
-            duration.append('{} seconds'.format(seconds))
-
-        return ', '.join(duration)
-
-
-class Song:
-    __slots__ = ('source', 'requester')
-
-    def __init__(self, source: YTDLSource):
-        self.source = source
-        self.requester = source.requester
-
-    def create_embed(self):
-        embed = (discord.Embed(title='Now playing',
-                               description='```css\n{0.source.title}\n```'.format(self),
-                               color=discord.Color.blurple())
-                 .add_field(name='Duration', value=self.source.duration)
-                 .add_field(name='Requested by', value=self.requester.mention)
-                 .add_field(name='Uploader', value='[{0.source.uploader}]({0.source.uploader_url})'.format(self))
-                 .add_field(name='URL', value='[Click]({0.source.url})'.format(self))
-                 .set_thumbnail(url=self.source.thumbnail))
-
-        return embed
-
-
-class SongQueue(asyncio.Queue):
-    def __getitem__(self, item):
-        if isinstance(item, slice):
-            return list(itertools.islice(self._queue, item.start, item.stop, item.step))
-        else:
-            return self._queue[item]
-
-    def __len__(self):
-        return self.qsize()
-
-    def clear(self):
-        self._queue.clear()
-
-    def shuffle(self):
-        random.shuffle(self._queue)
-
-    def remove(self, index: int):
-        del self._queue[index]
-
-
-class VoiceState:
-    def __init__(self, bot: commands.Bot, ctx: commands.Context):
-        self.bot = bot
-        self._ctx = ctx
-
-        self.current = None
-        self.voice = None
-        self.next = asyncio.Event()
-        self.songs = SongQueue()
-
-        self._loop = False
-        self._volume = 0.5
-        self.skip_votes = set()
-
-        self.audio_player = bot.loop.create_task(self.audio_player_task())
-
-    def __del__(self):
-        self.audio_player.cancel()
-
-    @property
-    def loop(self):
-        return self._loop
-
-    @loop.setter
-    def loop(self, value: bool):
-        self._loop = value
-
-    @property
-    def volume(self):
-        return self._volume
-
-    @volume.setter
-    def volume(self, value: float):
-        self._volume = value
-
-    @property
-    def is_playing(self):
-        return self.voice and self.current
-
-    async def audio_player_task(self):
-        while True:
-            self.next.clear()
-
-            if not self.loop:
-                # Try to get the next song within 3 minutes.
-                # If no song will be added to the queue in time,
-                # the player will disconnect due to performance
-                # reasons.
-                try:
-                    async with timeout(180):  # 3 minutes
-                        self.current = await self.songs.get()
-                except asyncio.TimeoutError:
-                    self.bot.loop.create_task(self.stop())
-                    return
-
-            self.current.source.volume = self._volume
-            self.voice.play(self.current.source, after=self.play_next_song)
-            await self.current.source.channel.send(embed=self.current.create_embed())
-
-            await self.next.wait()
-
-    def play_next_song(self, error=None):
-        if error:
-            raise VoiceError(str(error))
-
-        self.next.set()
-
-    def skip(self):
-        self.skip_votes.clear()
-
-        if self.is_playing:
-            self.voice.stop()
-
-    async def stop(self):
-        self.songs.clear()
-
-        if self.voice:
-            await self.voice.disconnect()
-            self.voice = None
+url_rx = re.compile(r'https?://(?:www\.)?.+')
 
 
 class Music(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot):
         self.bot = bot
-        self.voice_states = {}
+        self.votes = []
 
-    def get_voice_state(self, ctx: commands.Context):
-        state = self.voice_states.get(ctx.guild.id)
-        if not state:
-            state = VoiceState(self.bot, ctx)
-            self.voice_states[ctx.guild.id] = state
+        if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
+            bot.lavalink = lavalink.Client(bot.user.id)
+            bot.lavalink.add_node('127.0.0.1', 2333, 'Runningboy12?', 'us', 'default-node')  # Host, Port, Password, Region, Name
+            bot.add_listener(bot.lavalink.voice_update_handler, 'on_socket_response')
 
-        return state
+        lavalink.add_event_hook(self.track_hook)
 
     def cog_unload(self):
-        for state in self.voice_states.values():
-            self.bot.loop.create_task(state.stop())
+        self.bot.lavalink._event_hooks.clear()
 
-    def cog_check(self, ctx: commands.Context):
-        if not ctx.guild:
-            raise commands.NoPrivateMessage('This command can\'t be used in DM channels.')
+    async def cog_before_invoke(self, ctx):
+        guild_check = ctx.guild is not None
 
-        return True
+        if guild_check:
+            await self.ensure_voice(ctx)
 
-    async def cog_before_invoke(self, ctx: commands.Context):
-        ctx.voice_state = self.get_voice_state(ctx)
+        return guild_check
 
-    async def cog_command_error(self, ctx: commands.Context, error: commands.CommandError):
-        await ctx.send('An error occurred: {}'.format(str(error)))
+    """
+    async def cog_command_error(self, ctx, error):
+        if isinstance(error, commands.CommandInvokeError):
+            await ctx.send(error.original)
+            # The above handles errors thrown in this cog and shows them to the user.
+            # This shouldn't be a problem as the only errors thrown in this cog are from `ensure_voice`
+            # which contain a reason string, such as "Join a voicechannel" etc. You can modify the above
+    """  # if you want to do things differently.
 
-    @commands.command(name='join', invoke_without_subcommand=True)
-    async def _join(self, ctx: commands.Context):
-        """Joins a voice channel."""
+    async def ensure_voice(self, ctx):
+        """ This check ensures that the bot and command author are in the same voicechannel. """
+        player = self.bot.lavalink.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
 
-        destination = ctx.author.voice.channel
-        if ctx.voice_state.voice:
-            await ctx.voice_state.voice.move_to(destination)
+        should_connect = ctx.command.name in ('play', )  # Add commands that require joining voice to work.
+        should_not_connect = ctx.command.name in ('lyrics', )
+
+        if should_not_connect:
             return
 
-        ctx.voice_state.voice = await destination.connect()
+        if not ctx.author.voice or not ctx.author.voice.channel:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Voice Channel Error!",
+                description="• Please make sure to join a voice channel first!"
+            )
+            raise commands.CommandInvokeError(await ctx.send(embed=embed))
 
-    @commands.command(name='summon')
-    @commands.has_permissions(manage_guild=True)
-    async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
-        """Summons the bot to a voice channel.
-        If no channel was specified, it joins your channel.
-        """
+        if not player.is_connected:
+            if not should_connect:
+                embed = discord.Embed(
+                    color=self.bot.embed_color,
+                    title="→ Voice Channel Error!",
+                    description="• I am not connected to a voice channel"
+                )
+                raise commands.CommandInvokeError(await ctx.send(embed=embed))
 
-        if not channel and not ctx.author.voice:
-            raise VoiceError('You are neither connected to a voice channel nor specified a channel to join.')
+            permissions = ctx.author.voice.channel.permissions_for(ctx.me)
 
-        destination = channel or ctx.author.voice.channel
-        if ctx.voice_state.voice:
-            await ctx.voice_state.voice.move_to(destination)
-            return
+            if not permissions.connect or not permissions.speak:  # Check user limit too?
+                embed = discord.Embed(
+                    color=self.bot.embed_color,
+                    title="→ Permission Error!",
+                    description="• Please give me connect permissions, or speaking permissions!"
+                )
+                await ctx.send(embed=embed)
 
-        ctx.voice_state.voice = await destination.connect()
-
-    @commands.command(name='leave', aliases=['disconnect'])
-    @commands.has_permissions(manage_guild=True)
-    async def _leave(self, ctx: commands.Context):
-        """Clears the queue and leaves the voice channel."""
-
-        if not ctx.voice_state.voice:
-            return await ctx.send('Not connected to any voice channel.')
-
-        await ctx.voice_state.stop()
-        del self.voice_states[ctx.guild.id]
-
-    @commands.command(name='volume')
-    async def _volume(self, ctx: commands.Context, *, volume: int):
-        """Sets the volume of the player."""
-
-        if not ctx.voice_state.is_playing:
-            return await ctx.send('Nothing being played at the moment.')
-
-        if 0 > volume > 100:
-            return await ctx.send('Volume must be between 0 and 100')
-
-        ctx.voice_state.volume = volume / 100
-        await ctx.send('Volume of the player set to {}%'.format(volume))
-
-    @commands.command(name='now', aliases=['current', 'playing'])
-    async def _now(self, ctx: commands.Context):
-        """Displays the currently playing song."""
-
-        await ctx.send(embed=ctx.voice_state.current.create_embed())
-
-    @commands.command(name='pause')
-    @commands.has_permissions(manage_guild=True)
-    async def _pause(self, ctx: commands.Context):
-        """Pauses the currently playing song."""
-
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
-            ctx.voice_state.voice.pause()
-            await ctx.message.add_reaction('⏯')
-
-    @commands.command(name='resume')
-    @commands.has_permissions(manage_guild=True)
-    async def _resume(self, ctx: commands.Context):
-        """Resumes a currently paused song."""
-
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
-            ctx.voice_state.voice.resume()
-            await ctx.message.add_reaction('⏯')
-
-    @commands.command(name='stop')
-    @commands.has_permissions(manage_guild=True)
-    async def _stop(self, ctx: commands.Context):
-        """Stops playing song and clears the queue."""
-
-        ctx.voice_state.songs.clear()
-
-        if not ctx.voice_state.is_playing:
-            ctx.voice_state.voice.stop()
-            await ctx.message.add_reaction('⏹')
-
-    @commands.command(name='skip')
-    async def _skip(self, ctx: commands.Context):
-        """Vote to skip a song. The requester can automatically skip.
-        3 skip votes are needed for the song to be skipped.
-        """
-
-        if not ctx.voice_state.is_playing:
-            return await ctx.send('Not playing any music right now...')
-
-        voter = ctx.message.author
-        if voter == ctx.voice_state.current.requester:
-            await ctx.message.add_reaction('⏭')
-            ctx.voice_state.skip()
-
-        elif voter.id not in ctx.voice_state.skip_votes:
-            ctx.voice_state.skip_votes.add(voter.id)
-            total_votes = len(ctx.voice_state.skip_votes)
-
-            if total_votes >= 3:
-                await ctx.message.add_reaction('⏭')
-                ctx.voice_state.skip()
-            else:
-                await ctx.send('Skip vote added, currently at **{}/3**'.format(total_votes))
-
+            player.store('channel', ctx.channel.id)
+            await self.connect_to(ctx.guild.id, str(ctx.author.voice.channel.id))
         else:
-            await ctx.send('You have already voted to skip this song.')
+            if int(player.channel_id) != ctx.author.voice.channel.id:
+                embed = discord.Embed(
+                    color=self.bot.embed_color,
+                    title="→ Voice Channel Error!",
+                    description="• Please make sure you are in my voice channel!"
+                )
+                raise commands.CommandInvokeError(await ctx.send(embed=embed))
 
-    @commands.command(name='queue')
-    async def _queue(self, ctx: commands.Context, *, page: int = 1):
-        """Shows the player's queue.
-        You can optionally specify the page to show. Each page contains 10 elements.
-        """
+    async def track_hook(self, event):
+        if isinstance(event, lavalink.events.QueueEndEvent):
+            guild_id = int(event.player.guild_id)
+            await self.connect_to(guild_id, None)
 
-        if len(ctx.voice_state.songs) == 0:
-            return await ctx.send('Empty queue.')
+    async def connect_to(self, guild_id: int, channel_id: str):
+        ws = self.bot._connection._get_websocket(guild_id)
+        await ws.voice_state(str(guild_id), channel_id)
+
+    @commands.command(aliases=['p'])
+    async def play(self, ctx, *, query: str):
+        """ Searches and plays a song from a given query. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        query = query.strip('<>')
+
+        if not url_rx.match(query):
+            query = f'ytsearch:{query}'
+
+        results = await player.node.get_tracks(query)
+
+        if not results or not results['tracks']:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Playing Error!",
+                description="• The query you searched for was not found."
+            )
+            return await ctx.send(embed=embed)
+
+        # position = lavalink.utils.format_time(player.position)
+
+        if results['loadType'] == 'PLAYLIST_LOADED':
+            tracks = results['tracks']
+
+            for track in tracks:
+                player.add(requester=ctx.author.id, track=track)
+
+            embed = discord.Embed(color=self.bot.embed_color,
+                                  description=f'• **{results["playlistInfo"]["name"]}** - {len(tracks)} tracks',
+                                  title="→ Playlist Added!")
+            embed.set_thumbnail(url=f'https://img.youtube.com/vi/{track["info"]["identifier"]}/default.jpg')
+            await ctx.send(embed=embed)
+        else:
+            track = results['tracks'][0]
+
+            embed = discord.Embed(color=self.bot.embed_color,
+                                  description=f'• [**{track["info"]["title"]}**]({track["info"]["uri"]})',
+                                  title="→ Song Added To Queue!")
+            embed.set_thumbnail(url=f'https://img.youtube.com/vi/{track["info"]["identifier"]}/default.jpg')
+
+            track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
+            player.add(requester=ctx.author.id, track=track)
+
+            await ctx.send(embed=embed)
+
+        if not player.is_playing:
+            await player.play()
+
+    @play.error
+    async def play_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Invalid Argument!",
+                description="• Please put a valid option! Example: `l!play <Song Name / URL>`"
+            )
+            await ctx.send(embed=embed)
+
+    @commands.command()
+    async def lyrics(self, ctx, *, song):
+        async with aiohttp.ClientSession() as cs:
+            async with cs.get(f"https://api.ksoft.si/lyrics/search",
+                              params={"q": song},
+                              headers={"Authorization": f"Bearer {os.environ.get('ksoft_key')}"}) as r:
+                res = await r.json()
+
+                title = res["data"][0]["name"]
+                song_picture = res["data"][0]["album_art"]
+
+                try:
+                    lyrics = res["data"][0]["lyrics"]
+                except IndexError:
+                    lyrics = "• No results found"
+
+                if len(lyrics) > 2048:
+                    embed = discord.Embed(
+                        color=self.bot.embed_color,
+                        title=f"→ {title}",
+                        description=lyrics[:2047]
+                    )
+                    embed.set_thumbnail(url=song_picture)
+                    embed.set_footer(text="Powered By KSoft.Si", icon_url="https://cdn.ksoft.si/images/Logo1024.png")
+
+                    await ctx.send(embed=embed)
+
+                    embed1 = discord.Embed(
+                        color=self.bot.embed_color,
+                        description=lyrics[2048:]
+                    )
+                    embed1.set_footer(text="Powered By KSoft.Si", icon_url="https://cdn.ksoft.si/images/Logo1024.png")
+
+                    await ctx.send(embed=embed1)
+                    return
+
+                embed = discord.Embed(
+                    color=self.bot.embed_color,
+                    title=f"→ {title}",
+                    description=lyrics
+                )
+                embed.set_thumbnail(url=song_picture)
+                embed.set_footer(text="Powered By KSoft.Si", icon_url="https://cdn.ksoft.si/images/Logo1024.png")
+
+                await ctx.send(embed=embed)
+
+    @lyrics.error
+    async def lyrics_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Invalid Argument!",
+                description="• Please put in a valid option! Example: `l!lyrics <songname>`"
+            )
+
+            await ctx.send(embed=embed)
+
+    @commands.command()
+    async def seek(self, ctx, *, seconds: int):
+        """ Seeks to a given position in a track. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        track_time = player.position + (seconds * 1000)
+        await player.seek(track_time)
+
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ Resumed!",
+            description=f"• Song time has been moved to: `{lavalink.utils.format_time(track_time)}`"
+        )
+        await ctx.send(embed=embed)
+
+    @seek.error
+    async def seek_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Invalid Argument!",
+                description="• Please put a valid option! Example: `l!seek <time>`"
+            )
+            await ctx.send(embed=embed)
+
+    @commands.command(aliases=['s'])
+    async def skip(self, ctx):
+        """ Skips the current track. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        await player.skip()
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ Skipped",
+            description="• The current song you have requested has been **skipped!**"
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def stop(self, ctx):
+        """ Stops the player and clears its queue. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        if not player.is_playing:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ No Songs!",
+                description="• Nothing is playing at the moment!"
+            )
+            return await ctx.send(embed=embed)
+
+        player.queue.clear()
+        await player.stop()
+
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ Stopped!",
+            description="• The music has been stopped!"
+        )
+        await ctx.send(embed=embed)
+
+    @commands.command(aliases=['np', 'n', 'playing'])
+    async def now(self, ctx):
+        """ Shows some stats about the currently playing song. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        if not player.current:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ No Songs!",
+                description="• Nothing is playing at the moment!"
+            )
+            return await ctx.send(embed=embed)
+
+        position = lavalink.utils.format_time(player.position)
+        if player.current.stream:
+            duration = '🔴 Live Video'
+        else:
+            duration = lavalink.utils.format_time(player.current.duration)
+        song = f'**• [{player.current.title}]({player.current.uri})**'
+
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title='→ Currently Playing:',
+            description=f"{song}"
+                        f"\n**•** Current time: **({position}/{duration})**"
+        )
+        embed.set_thumbnail(url=f'https://img.youtube.com/vi/{player.current.identifier}/default.jpg')
+        await ctx.send(embed=embed)
+
+    @commands.command(aliases=['q'])
+    async def queue(self, ctx, page: int = 1):
+        """ Shows the player's queue. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        if not player.queue:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ No Queue!",
+                description="• No songs are in the queue at the moment!"
+            )
+            return await ctx.send(embed=embed)
 
         items_per_page = 10
-        pages = math.ceil(len(ctx.voice_state.songs) / items_per_page)
+        pages = math.ceil(len(player.queue) / items_per_page)
 
         start = (page - 1) * items_per_page
         end = start + items_per_page
 
-        queue = ''
-        for i, song in enumerate(ctx.voice_state.songs[start:end], start=start):
-            queue += '`{0}.` [**{1.source.title}**]({1.source.url})\n'.format(i + 1, song)
+        queue_list = ''
+        for index, track in enumerate(player.queue[start:end], start=start):
+            queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
 
-        embed = (discord.Embed(description='**{} tracks:**\n\n{}'.format(len(ctx.voice_state.songs), queue))
-                 .set_footer(text='Viewing page {}/{}'.format(page, pages)))
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ List Of Songs:",
+            description=f"\n{queue_list}"
+        )
+        # embed.set_author(name=f'→ List of songs: {len(player.queue)} \n\n{queue_list}')
+        embed.set_footer(text=f'• On page: {page}/{pages}')
         await ctx.send(embed=embed)
 
-    @commands.command(name='shuffle')
-    async def _shuffle(self, ctx: commands.Context):
-        """Shuffles the queue."""
+    @commands.command(aliases=['resume'])
+    async def pause(self, ctx):
+        """ Pauses/Resumes the current track. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
-        if len(ctx.voice_state.songs) == 0:
-            return await ctx.send('Empty queue.')
+        if not player.is_playing:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Not Playing!",
+                description="• No song is playing is currently playing!"
+            )
+            return await ctx.send(embed=embed)
 
-        ctx.voice_state.songs.shuffle()
-        await ctx.message.add_reaction('✅')
+        if player.paused:
+            await player.set_pause(False)
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Resumed!",
+                description="• The current song has been **resumed successfully!**"
+            )
+            await ctx.send(embed=embed)
+        else:
+            await player.set_pause(True)
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Paused!",
+                description="• The current song has been **paused successfully!**"
+            )
+            await ctx.send(embed=embed)
 
-    @commands.command(name='remove')
-    async def _remove(self, ctx: commands.Context, index: int):
-        """Removes a song from the queue at a given index."""
+    @commands.command(aliases=['v'])
+    async def volume(self, ctx, volume: int = None):
+        """ Changes the player's volume (0-1000). """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
-        if len(ctx.voice_state.songs) == 0:
-            return await ctx.send('Empty queue.')
+        if not volume:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Current Volume!",
+                description=f"• Volume: **{player.volume}%**"
+            )
+            return await ctx.send(embed=embed)
 
-        ctx.voice_state.songs.remove(index - 1)
-        await ctx.message.add_reaction('✅')
+        await player.set_volume(volume)  # Lavalink will automatically cap values between, or equal to 0-1000.
 
-    @commands.command(name='loop')
-    async def _loop(self, ctx: commands.Context):
-        """Loops the currently playing song.
-        Invoke this command again to unloop the song.
-        """
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ Volume Updated!",
+            description=f"• Volume set to: **{player.volume}%**"
+        )
 
-        if not ctx.voice_state.is_playing:
-            return await ctx.send('Nothing being played at the moment.')
+        await ctx.send(embed=embed)
 
-        # Inverse boolean value to loop and unloop.
-        ctx.voice_state.loop = not ctx.voice_state.loop
-        await ctx.message.add_reaction('✅')
+    @commands.command(aliases=['shuff'])
+    async def shuffle(self, ctx):
+        """ Shuffles the player's queue. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        if not player.is_playing:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Not Playing!",
+                description="• No song is playing is currently playing!"
+            )
+            return await ctx.send(embed=embed)
 
-    @commands.command(name='play')
-    async def _play(self, ctx: commands.Context, *, search: str):
-        """Plays a song.
-        If there are songs in the queue, this will be queued until the
-        other songs finished playing.
-        This command automatically searches from various sites if no URL is provided.
-        A list of these sites can be found here: https://rg3.github.io/youtube-dl/supportedsites.html
-        """
+        player.shuffle = not player.shuffle
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ Song Shuffling",
+            description="• Song shuffling has been"
+                        + (' **enabled!**' if player.shuffle else ' **disabled!**')
+        )
+        await ctx.send(embed=embed)
 
-        if not ctx.voice_state.voice:
-            await ctx.invoke(self._join)
+    @commands.command(aliases=['loop'])
+    async def repeat(self, ctx):
+        """ Repeats the current song until the command is invoked again. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
-        async with ctx.typing():
-            try:
-                source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
-            except YTDLError as e:
-                await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
-            else:
-                song = Song(source)
+        if not player.is_playing:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ No Songs!",
+                description="• Nothing is playing at the moment!"
+            )
+            return await ctx.send(embed=embed)
 
-                await ctx.voice_state.songs.put(song)
-                await ctx.send('Enqueued {}'.format(str(source)))
+        player.repeat = not player.repeat
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ Song looping!",
+            description="• Looping has been" + (' **enabled!**' if player.repeat else ' **disabled!**')
+        )
+        await ctx.send(embed=embed)
 
-    @_join.before_invoke
-    @_play.before_invoke
-    async def ensure_voice_state(self, ctx: commands.Context):
-        if not ctx.author.voice or not ctx.author.voice.channel:
-            raise commands.CommandError('You are not connected to any voice channel.')
+    @commands.command(aliases=['rm'])
+    async def remove(self, ctx, index: int):
+        """ Removes an item from the player's queue with the given index. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
-        if ctx.voice_client:
-            if ctx.voice_client.channel != ctx.author.voice.channel:
-                raise commands.CommandError('Bot is already in a voice channel.')
+        if not player.queue:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ No Queued Items!",
+                description="• There is nothing queued at the moment!"
+            )
+            return await ctx.send(embed=embed)
 
+        if index > len(player.queue) or index < 1:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ No Queued Items!",
+                description=f"• Your remove number needs to be between 1 and {len(player.queue)}"
+            )
+            return await ctx.send(embed=embed)
+        removed = player.queue.pop(index - 1)  # Account for 0-index.
+
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ Item Removed!",
+            description=f"• Removed `{removed.title}` from the queue."
+        )
+        await ctx.send(embed=embed)
+
+    @remove.error
+    async def remove_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Invalid Argument!",
+                description="• Please put a valid option! Example: `l!remove 1`"
+            )
+            await ctx.send(embed=embed)
+
+    @commands.command(aliases=["find"])
+    async def search(self, ctx, *, query):
+        """ Lists the first 10 search results from a given query. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        if not query.startswith('ytsearch:') and not query.startswith('scsearch:'):
+            query = 'ytsearch:' + query
+
+        results = await player.node.get_tracks(query)
+
+        if not results or not results['tracks']:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ No Results!",
+                description="• Nothing was found in your search term!"
+            )
+            return await ctx.send(embed=embed)
+
+        tracks = results['tracks'][:10]  # First 10 results
+
+        o = ''
+        for index, track in enumerate(tracks, start=1):
+            track_title = track['info']['title']
+            track_uri = track['info']['uri']
+            o += f'`{index}.` [{track_title}]({track_uri})\n'
+
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ Top 5 Results:",
+            description=f"{o}"
+        )
+        await ctx.send(embed=embed)
+
+    @search.error
+    async def find_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Invalid Argument!",
+                description="• Please put a valid option! Example: `l!search <song>`"
+            )
+            await ctx.send(embed=embed)
+
+    @commands.command(aliases=['dc'])
+    async def disconnect(self, ctx):
+        """ Disconnects the player from the voice channel and clears its queue. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        if not player.is_connected:
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Not Connected!",
+                description="• You need to join a voice channel to play music!"
+            )
+            return await ctx.send(embed=embed)
+
+        if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
+            embed = discord.Embed(
+                color=self.bot.embed_color,
+                title="→ Not Connected!",
+                description="• You are not in my voice channel that I am connected to!"
+            )
+            return await ctx.send(embed=embed)
+
+        player.queue.clear()
+        await player.stop()
+        await self.connect_to(ctx.guild.id, None)
+
+        embed = discord.Embed(
+            color=self.bot.embed_color,
+            title="→ Disconnected!",
+            description="• I have **disconnected** from the voice channel!"
+        )
+        return await ctx.send(embed=embed)
 
 
 def setup(bot):
