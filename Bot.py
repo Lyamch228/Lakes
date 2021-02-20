@@ -252,16 +252,6 @@ async def userinfo(ctx, member: discord.Member):
 
     await ctx.send(embed=embed)    
 
-@bot.command()                 
-async def avatar(ctx, member : discord.Member = None):
-                            user = ctx.message.author if (member == None) else member
-                            await ctx.message.delete()
-                            embed = discord.Embed(title=f'Аватар пользователя {user}', description= f'[Ссылка на изображение]({user.avatar_url})', color=user.color)
-                            embed.set_footer(text= f'Вызвано: {ctx.message.author}', icon_url= str(ctx.message.author.avatar_url))
-                            embed.set_image(url=user.avatar_url)
-                            await ctx.send(embed=embed)
-
-
 @bot.event
 async def on_message(message):
     if message.author.id != bot.user.id: # Проверка бот ли это
