@@ -17,6 +17,7 @@ asyncio
 youtube-dl
 asyncpg
 Cybernator
+jishaku
 chardet
 timeago
 git+git://github.com/Rapptz/discord.py.git
