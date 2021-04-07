@@ -2,7 +2,7 @@ aiohttp
 wrapt==1.12.1
 xmltodict==0.12.0
 yarl==1.6.3
-discord.py
+discord.py>=3.8.0
 aiohttp
 websockets
 pynacl==1.2.1
