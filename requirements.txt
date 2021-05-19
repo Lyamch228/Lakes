@@ -23,3 +23,4 @@ timeago
 git+git://github.com/Rapptz/discord.py.git
 asyncpg
 lavalink==3.1.4
+python>=3.7.5
