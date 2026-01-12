@@ -5,7 +5,7 @@ yarl==1.6.3
 discord.py
 aiohttp
 websockets
-pynacl==1.2.1
+pynacl==1.6.2
 ffprobe
 ffmpeg
 nekos.py
